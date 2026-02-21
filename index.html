@@ -227,16 +227,14 @@
     const myUsername = "Shreya";          // change to "Himanshu" for other client
     const otherUsername = "Himanshu";
 
-    // --- WebSocket connection ---
-    const ws = new WebSocket(`ws://localhost:8000/ws/${chatId}?username=${myUsername}`);
+   // --- WebSocket connection (Production) ---
+const ws = new WebSocket(`wss://tgbackend.vercel.app/ws/${chatId}?username=${myUsername}`);
 
-    // --- Compute backend HTTP base from WebSocket URL ---
-    const backendBase = (() => {
-      const url = new URL(ws.url);
-      return `${url.protocol === 'ws:' ? 'http:' : 'https:'}//${url.host}`;
-    })();
-    console.log('✅ Backend base:', backendBase); // should be http://localhost:8000
+// --- Backend HTTP Base (Production) ---
+const backendBase = "https://tgbackend.vercel.app";
 
+console.log('✅ Backend base:', backendBase);
+    
     // --- DOM elements ---
     const chatBox = document.getElementById("chat");
     const typingDiv = document.getElementById("typing");
@@ -551,4 +549,5 @@
 </script>
 
 </body>
+
 </html>
