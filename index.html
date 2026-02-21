@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Private · Shreya & Himanshu</title>
+
+  <!-- Tailwind for utility -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+
+  <style>
+    * { font-family: 'Poppins', sans-serif; }
+
+    /* ===== Smooth animations for welcome screen ===== */
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(-30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeUp {
+      0% { opacity: 0; transform: translateY(40px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeIn { animation: fadeIn 1.2s ease forwards; }
+    .animate-fadeUp { animation: fadeUp 1.6s ease forwards; }
+
+    /* ===== Chat message animation ===== */
+    .message-animation {
+      animation: fadeUp 0.3s ease;
+    }
+
+    /* ===== Custom scrollbar + SMOOTH SCROLL ===== */
+    #chat::-webkit-scrollbar { width: 6px; }
+    #chat::-webkit-scrollbar-track { background: rgba(255,255,240,0.1); border-radius: 10px; }
+    #chat::-webkit-scrollbar-thumb { background: #ec4899; border-radius: 10px; }
+    #chat {
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* ===== Reaction picker (hover) ===== */
+    .reaction-picker { display: none; }
+    .message-wrapper:hover .reaction-picker { display: flex; }
+
+    /* ===== Chat bubbles – refined ===== */
+    .bubble-left {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(8px);
+      color: #1f1a2e;
+      border-radius: 24px 24px 24px 8px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.02);
+    }
+    .bubble-right {
+      background: rgba(230, 120, 160, 0.8);
+      backdrop-filter: blur(8px);
+      color: white;
+      border-radius: 24px 24px 8px 24px;
+      box-shadow: 0 6px 14px rgba(180,70,120,0.15);
+    }
+
+    /* ===== Online pulse ===== */
+    .status-pulse { box-shadow: 0 0 0 0 rgba(230,120,160,0.5); animation: pulse-soft 2s infinite; }
+    @keyframes pulse-soft { 70% { box-shadow: 0 0 0 10px rgba(230,120,160,0); } }
+
+    /* ===== Image loading blur ===== */
+    .img-load { filter: blur(12px); transition: filter 0.3s; }
+    .img-loaded { filter: blur(0); }
+
+    /* ===== Floating hearts background ===== */
+    .heart-float {
+      position: absolute;
+      color: rgba(255, 210, 230, 0.3);
+      font-size: 20px;
+      pointer-events: none;
+      animation: floatUp 12s linear infinite;
+      z-index: 0;
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(110vh) rotate(0deg); opacity:0; }
+      20% { opacity:0.4; }
+      100% { transform: translateY(-20vh) rotate(15deg); opacity:0; }
+    }
+
+    /* ===== Typing dots ===== */
+    .typing-dots::after {
+      content: '...';
+      animation: dots 1.5s steps(4,end) infinite;
+      display: inline-block;
+      width: 20px;
+    }
+    @keyframes dots {
+      0%,20% { content: ''; }
+      40% { content: '.'; }
+      60% { content: '..'; }
+      80%,100% { content: '...'; }
+    }
+
+    /* ===== Birthday countdown shimmer effect ===== */
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    .birthday-shimmer {
+      background: linear-gradient(90deg, #fbcfe8, #f9a8d4, #f472b6, #f9a8d4, #fbcfe8);
+      background-size: 400% 100%;
+      animation: shimmer 8s infinite linear;
+    }
+
+    /* ===== Professional download button style ===== */
+    .download-btn {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,0.6);
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .download-btn:hover {
+      background: rgba(255, 255, 255, 1);
+      transform: scale(1.1);
+      box-shadow: 0 8px 16px rgba(236, 72, 153, 0.3);
+    }
+    .download-btn svg {
+      transition: transform 0.2s;
+    }
+    .download-btn:hover svg {
+      transform: translateY(2px);
+    }
+  </style>
+</head>
+<body class="h-screen w-screen overflow-hidden relative">
+
+  <!-- Floating hearts background (appears behind everything) -->
+  <div id="hearts-container" class="fixed inset-0 overflow-hidden pointer-events-none"></div>
+
+  <!-- ========== WELCOME SCREEN (full overlay) ========== -->
+  <div id="welcomeScreen" class="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-[#1e1035] via-[#150d25] to-[#0b0618] z-50 transition-opacity duration-1000">
+    <div class="text-center px-6 max-w-md">
+      <h1 class="text-4xl md:text-5xl font-bold text-pink-400 mb-6 animate-fadeIn">
+        Welcome Shreya 💖
+      </h1>
+      <p class="text-gray-300 text-lg leading-relaxed animate-fadeUp">
+        This private space is only for you, Shreya.<br>
+        Every message carries my heartbeat,<br>
+        every second feels closer to you,<br>
+        and every word here is meant to make you smile.
+      </p>
+      <div class="mt-10">
+        <div class="w-14 h-14 border-4 border-pink-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== MAIN CHAT – FULL SCREEN PAVILION ========== -->
+  <div id="chatApp" class="w-full h-screen max-w-3xl mx-auto chat-pavilion flex flex-col relative z-10 shadow-2xl opacity-100" style="background: rgba(255,255,255,0.15); backdrop-filter: blur(24px); border-left:1px solid rgba(255,255,255,0.3); border-right:1px solid rgba(255,255,255,0.3); box-shadow:0 30px 60px -10px rgba(0,0,0,0.2);">
+
+    <!-- HEADER -->
+    <div class="px-5 py-3 flex items-center justify-between border-b border-white/30">
+      <div class="flex items-center gap-3">
+        <!-- Avatar with subtle status -->
+        <div class="relative">
+          <div class="w-12 h-12 rounded-full bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center overflow-hidden ring-2 ring-white/60">
+            <img src="https://i.pravatar.cc/100?u=shreya" class="w-full h-full object-cover" alt="shreya">
+          </div>
+          <span class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-400 rounded-full border-2 border-white status-pulse"></span>
+        </div>
+        <div>
+          <h1 class="text-xl font-medium text-gray-800 flex items-center gap-1">
+            Shreya <span class="text-2xl italic text-pink-500" style="font-family:'Playfair Display';">·</span> Himanshu
+          </h1>
+          <div id="status-text" class="text-xs flex items-center gap-1.5 text-gray-600">
+            <span class="inline-block w-1.5 h-1.5 bg-emerald-400 rounded-full"></span>
+            <span>online now</span>
+          </div>
+        </div>
+      </div>
+      <!-- theme toggles -->
+      <div class="flex gap-1.5">
+        <button onclick="setTheme('pink')" class="w-7 h-7 rounded-full bg-rose-200 border border-white shadow-md hover:scale-110 transition" title="rose glow"></button>
+        <button onclick="setTheme('midnight')" class="w-7 h-7 rounded-full bg-indigo-800 border border-white shadow-md hover:scale-110 transition" title="midnight"></button>
+        <button onclick="setTheme('pastel')" class="w-7 h-7 rounded-full bg-purple-200 border border-white shadow-md hover:scale-110 transition" title="soft mist"></button>
+      </div>
+    </div>
+
+    <!-- BIRTHDAY COUNTDOWN BANNER (new) -->
+    <div id="birthday-banner" class="px-3 py-2 text-center bg-gradient-to-r from-pink-200 via-purple-200 to-pink-200 text-gray-800 font-medium text-sm md:text-base relative overflow-hidden border-b border-white/30 birthday-shimmer">
+      <span id="countdown-timer">🎂 loading...</span> until Shreya's Birthday 🎉🎈
+      <!-- subtle floating emojis as extra effect -->
+      <div class="absolute inset-0 pointer-events-none text-white/20 text-2xl flex justify-between px-2 items-center">
+        <span>🎂</span> <span>🎈</span> <span>🎁</span> <span>✨</span> <span>🌸</span>
+      </div>
+    </div>
+
+    <!-- CHAT MESSAGES area -->
+    <div id="chat" class="flex-1 overflow-y-auto p-4 space-y-3 scroll-smooth"></div>
+
+    <!-- TYPING INDICATOR -->
+    <div id="typing" class="px-5 py-1.5 text-sm text-rose-600 hidden items-center gap-1.5 italic" style="font-family:'Playfair Display';">
+      <span id="typing-text">Himanshu is writing</span>
+      <span class="typing-dots"></span>
+    </div>
+
+    <!-- INPUT AREA -->
+    <div class="p-3 border-t border-white/30 flex gap-2 items-center bg-white/5 backdrop-blur-sm">
+      <label for="image-upload" class="cursor-pointer text-rose-400 hover:text-rose-500 transition p-2.5 rounded-full hover:bg-white/20">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+      </label>
+      <input id="image-upload" type="file" accept="image/*" class="hidden">
+      <input id="messageInput"
+        class="flex-1 rounded-full px-5 py-3 focus:outline-none bg-white/60 placeholder-gray-400 text-sm shadow-inner border-0"
+        placeholder=" whisper something... 💫" />
+      <button onclick="sendMessage()"
+        class="bg-rose-400/80 hover:bg-rose-500 text-white px-6 py-3 rounded-full transition active:scale-95 shadow-lg font-medium backdrop-blur-sm">
+        Send
+      </button>
+    </div>
+  </div>
+
+  <script>
+  (function() {
+    // --- Configuration ---
+    const chatId = "shreya-himanshu";
+    const myUsername = "Shreya";          // change to "Himanshu" for other client
+    const otherUsername = "Himanshu";
+
+    // --- WebSocket connection ---
+    const ws = new WebSocket(`ws://localhost:8000/ws/${chatId}?username=${myUsername}`);
+
+    // --- Compute backend HTTP base from WebSocket URL ---
+    const backendBase = (() => {
+      const url = new URL(ws.url);
+      return `${url.protocol === 'ws:' ? 'http:' : 'https:'}//${url.host}`;
+    })();
+    console.log('✅ Backend base:', backendBase); // should be http://localhost:8000
+
+    // --- DOM elements ---
+    const chatBox = document.getElementById("chat");
+    const typingDiv = document.getElementById("typing");
+    const typingText = document.getElementById("typing-text");
+    const input = document.getElementById("messageInput");
+    const statusText = document.getElementById("status-text");
+    const welcomeScreen = document.getElementById('welcomeScreen');
+
+    // --- messages map for reactions ---
+    const messages = new Map();
+
+    // --- SOUND EFFECTS (using sound.mp3) ---
+    const SOUND_URL = 'NOTIFY.MP3'; // same file for both send/receive
+
+    function playSound() {
+      try {
+        const audio = new Audio(SOUND_URL);
+        audio.volume = 0.6; // comfortable level
+        audio.play().catch(e => console.log('Audio play failed (interaction needed?)', e));
+      } catch (e) {
+        console.warn('Sound error', e);
+      }
+    }
+
+    // --- Floating hearts generator (unchanged) ---
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.className = 'heart-float';
+      const symbols = ['❤️', '💧', '🌸', '✨', '🕊️', '🌙'];
+      heart.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
+      heart.style.left = Math.random() * 100 + '%';
+      heart.style.animationDuration = (8 + Math.random() * 8) + 's';
+      heart.style.fontSize = (12 + Math.random() * 20) + 'px';
+      heart.style.opacity = 0.15 + Math.random() * 0.25;
+      document.getElementById('hearts-container').appendChild(heart);
+      setTimeout(() => heart.remove(), 11000);
+    }
+    setInterval(createHeart, 600);
+
+    // --- WELCOME SCREEN FADE OUT ---
+    setTimeout(() => {
+      if (welcomeScreen) {
+        welcomeScreen.style.opacity = '0';
+        setTimeout(() => {
+          welcomeScreen.style.display = 'none';
+        }, 1000);
+      }
+    }, 3000);
+
+    // --- BIRTHDAY COUNTDOWN (18 June) ---
+    function updateBirthdayCountdown() {
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      // Birthday is June 18 (month index 5)
+      let birthday = new Date(currentYear, 5, 18, 0, 0, 0); // 18 June 00:00
+
+      // If today is after June 18, use next year
+      if (now > birthday) {
+        birthday = new Date(currentYear + 1, 5, 18, 0, 0, 0);
+      }
+
+      const diffMs = birthday - now;
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      const diffHrs = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+      const diffSecs = Math.floor((diffMs % (1000 * 60)) / 1000);
+
+      let countdownStr = '';
+      if (diffDays === 0 && diffHrs === 0 && diffMins === 0 && diffSecs === 0) {
+        countdownStr = '🎉 TODAY IS THE DAY! 🎉';
+      } else {
+        countdownStr = `${diffDays}d ${diffHrs}h ${diffMins}m ${diffSecs}s`;
+      }
+      document.getElementById('countdown-timer').innerText = countdownStr;
+    }
+    updateBirthdayCountdown();
+    setInterval(updateBirthdayCountdown, 1000);
+
+    // --- DOWNLOAD IMAGE FUNCTION (enhanced) ---
+    window.downloadImage = async function(imageUrl) {
+      try {
+        // Show a small visual feedback (could be a toast, but we just try to download)
+        const link = document.createElement('a');
+        link.style.display = 'none';
+        document.body.appendChild(link);
+
+        // Handle both data URLs and regular URLs
+        const response = await fetch(imageUrl);
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        link.href = url;
+        link.download = 'shreya-himanshu-image.jpg'; // default name
+        link.click();
+        
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+          document.body.removeChild(link);
+        }, 100);
+      } catch (err) {
+        console.error('Download failed, opening in new tab:', err);
+        window.open(imageUrl, '_blank');
+      }
+    };
+
+    // --- ADD MESSAGE (bubbles) with PROFESSIONAL DOWNLOAD BUTTON ---
+    function addMessage(data, isOther) {
+      const messageDiv = document.createElement("div");
+      messageDiv.className = `message-wrapper relative ${isOther ? 'text-left' : 'text-right'} message-animation`;
+      messageDiv.dataset.id = data.id;
+
+      let content = '';
+      if (data.type === 'image') {
+        // Build full URL if relative (starts with '/')
+        const imageUrl = data.url.startsWith('/') ? backendBase + data.url : data.url;
+        console.log('📸 Loading image from:', imageUrl); // debug
+        // Escape single quotes for onclick
+        const escapedUrl = imageUrl.replace(/'/g, "\\'");
+        // Professional download button with tooltip and stylish design
+        content = `<div class="relative inline-block max-w-xs rounded-3xl shadow-md overflow-hidden bg-white/30 backdrop-blur-sm border border-white/40">
+          <img src="${imageUrl}" class="w-full h-auto img-load" 
+               onload="this.classList.remove('img-load'); this.classList.add('img-loaded');" 
+               onerror="this.onerror=null; this.src='https://via.placeholder.com/200?text=Image+failed';" />
+          <button onclick="downloadImage('${escapedUrl}')" class="download-btn absolute top-2 right-2 rounded-full p-2.5 z-20 group" title="Save image to device">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 4v12m0 0l-3-3m3 3l3-3" />
+            </svg>
+          </button>
+        </div>`;
+      } else {
+        const bubbleClass = isOther ? 'bubble-left' : 'bubble-right';
+        content = `<div class="${bubbleClass} inline-block px-5 py-3 max-w-xs shadow-lg backdrop-blur-sm">${data.text}</div>`;
+      }
+
+      const now = new Date();
+      const timestamp = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+      const receipt = !isOther ? '<span class="text-xs ml-1.5 text-white/70">✓✓</span>' : '';
+
+      const reactionPicker = `
+        <div class="reaction-picker absolute bottom-0 ${isOther ? 'left-0' : 'right-0'} -translate-y-2 bg-white/70 backdrop-blur-sm rounded-full px-1.5 py-0.5 gap-1 text-lg z-10 shadow-md">
+          <button onclick="sendReaction('${data.id}', '❤️')" class="reaction-btn hover:scale-125 transition">❤️</button>
+          <button onclick="sendReaction('${data.id}', '🥺')" class="reaction-btn hover:scale-125 transition">🥺</button>
+          <button onclick="sendReaction('${data.id}', '😏')" class="reaction-btn hover:scale-125 transition">😏</button>
+          <button onclick="sendReaction('${data.id}', '🕊️')" class="reaction-btn hover:scale-125 transition">🕊️</button>
+        </div>
+      `;
+
+      messageDiv.innerHTML = `
+        ${content}
+        <div class="text-xs text-gray-400 mt-1 flex items-center justify-end gap-1">
+          <span>${timestamp}</span>${receipt}
+        </div>
+        ${reactionPicker}
+      `;
+
+      chatBox.appendChild(messageDiv);
+      // Smooth scroll to bottom
+      chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
+      messages.set(data.id, messageDiv);
+    }
+
+    // --- WebSocket message handler ---
+    ws.onmessage = function(event) {
+      const data = JSON.parse(event.data);
+      console.log("📩 Received:", data);
+
+      switch(data.type) {
+        case "message":
+          addMessage(data, data.sender !== myUsername);
+          // Play sound for incoming message from other
+          if (data.sender !== myUsername) playSound();
+          setTimeout(() => {
+            ws.send(JSON.stringify({type: "read", messageId: data.id}));
+          }, 1000);
+          break;
+        case "typing":
+          const phrases = [
+            "Himanshu is thinking of you",
+            "Himanshu is smiling",
+            "Your prince writes...",
+            "Himanshu sends a whisper",
+            "Himanshu is dreaming"
+          ];
+          typingText.innerText = phrases[Math.floor(Math.random() * phrases.length)];
+          typingDiv.classList.remove("hidden");
+          setTimeout(() => typingDiv.classList.add("hidden"), 2500);
+          break;
+        case "reaction":
+          applyReaction(data.messageId, data.emoji);
+          break;
+        case "read":
+          markAsRead(data.messageId);
+          break;
+        case "status":
+          updateStatus(data.user, data.status, data.last_seen);
+          break;
+        case "image":
+          addMessage(data, data.sender !== myUsername);
+          // Play sound for incoming image from other
+          if (data.sender !== myUsername) playSound();
+          break;
+        default: break;
+      }
+    };
+
+    // --- send message ---
+    window.sendMessage = function() {
+      const text = input.value.trim();
+      if (!text) return;
+
+      const id = Date.now() + '-' + Math.random().toString(36);
+      const message = {
+        type: "message",
+        id: id,
+        text: text,
+        sender: myUsername
+      };
+
+      addMessage(message, false);
+      ws.send(JSON.stringify(message));
+      // Play sound for sent message
+      playSound();
+      input.value = "";
+    };
+
+    // --- image upload handler ---
+    document.getElementById('image-upload').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const id = Date.now() + '-' + Math.random().toString(36);
+        const message = {
+          type: "image",
+          id: id,
+          url: e.target.result,
+          sender: myUsername
+        };
+        addMessage(message, false);
+        ws.send(JSON.stringify(message));
+        // Play sound for sent image
+        playSound();
+      };
+      reader.readAsDataURL(file);
+      this.value = '';
+    });
+
+    // --- reaction functions ---
+    window.sendReaction = function(messageId, emoji) {
+      ws.send(JSON.stringify({
+        type: "reaction",
+        messageId: messageId,
+        emoji: emoji
+      }));
+      applyReaction(messageId, emoji);
+    };
+
+    function applyReaction(messageId, emoji) {
+      const msgDiv = messages.get(messageId);
+      if (!msgDiv) return;
+      let reactionBadge = msgDiv.querySelector('.reaction-badge');
+      if (reactionBadge) reactionBadge.remove();
+      reactionBadge = document.createElement('div');
+      reactionBadge.className = 'reaction-badge absolute -bottom-2 -right-2 bg-white/70 backdrop-blur-sm rounded-full px-1.5 text-sm shadow-md z-20';
+      reactionBadge.textContent = emoji;
+      msgDiv.appendChild(reactionBadge);
+    }
+
+    function markAsRead(messageId) {
+      const msgDiv = messages.get(messageId);
+      if (!msgDiv) return;
+      const receiptSpan = msgDiv.querySelector('.text-gray-400 span:last-child');
+      if (receiptSpan) receiptSpan.textContent = '✓✓';
+    }
+
+    function updateStatus(user, status, lastSeen) {
+      if (user === otherUsername) {
+        if (status === 'online') {
+          statusText.innerHTML = '<span class="inline-block w-1.5 h-1.5 bg-emerald-400 rounded-full"></span><span class="ml-1">online now</span>';
+        } else {
+          const last = lastSeen ? new Date(lastSeen).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : 'recently';
+          statusText.innerHTML = '<span class="inline-block w-1.5 h-1.5 bg-gray-400 rounded-full"></span><span class="ml-1">last seen ' + last + '</span>';
+        }
+      }
+    }
+
+    // --- typing indicator ---
+    input.addEventListener("input", () => {
+      ws.send(JSON.stringify({ type: "typing" }));
+    });
+
+    // --- enter to send ---
+    input.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") sendMessage();
+    });
+
+    // --- theme switcher ---
+    window.setTheme = function(theme) {
+      const body = document.body;
+      if (theme === 'pink') {
+        body.style.background = 'linear-gradient(145deg, #fce7f3, #fbcfe8, #f5d0fe, #e9d5ff)';
+      } else if (theme === 'midnight') {
+        body.style.background = 'linear-gradient(145deg, #1e1b4b, #2e1a4a, #2d1f4b, #1f1a4b)';
+      } else if (theme === 'pastel') {
+        body.style.background = 'linear-gradient(145deg, #d9b4fe, #bae6fd, #fbcfe8, #fef9c3)';
+      }
+    };
+
+    ws.onopen = () => console.log("💫 Connected");
+    ws.onerror = (err) => console.error("❌ WebSocket error", err);
+  })();
+</script>
+
+</body>
+</html>
