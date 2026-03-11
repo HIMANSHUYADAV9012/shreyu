@@ -329,10 +329,12 @@
     </label>
     <input id="image-upload" type="file" accept="image/*" class="hidden">
     <input id="messageInput"
-      class="flex-1 rounded-full px-5 py-3 focus:outline-none bg-white/60 placeholder-gray-400 text-sm shadow-inner border-0"
+      class="flex-grow min-w-0 rounded-full px-4 py-3 focus:outline-none bg-white/60 placeholder-gray-400 text-sm shadow-inner border-0"
       placeholder=" whisper something... 💫" />
     <button onclick="sendMessage()"
-      class="bg-rose-400/80 hover:bg-rose-500 text-white px-6 py-3 rounded-full transition active:scale-95 shadow-lg font-medium backdrop-blur-sm">Send</button>
+class="flex-shrink-0 bg-rose-400/80 hover:bg-rose-500 text-white px-4 py-2.5 rounded-full transition active:scale-95 shadow-lg font-medium">
+Send
+</button>
   </div>
 </div>
 
