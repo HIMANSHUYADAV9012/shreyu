@@ -1,119 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <!-- Essential for mobile: width=device-width, no zooming, covers full screen -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <title>Private · Shreya & Himanshu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Private · Shreya & Himanshu ✨</title>
 
-  <!-- Tailwind for utility (only used for spacing/colors – we'll add custom classes for robustness) -->
+  <!-- Tailwind for utility -->
   <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Poppins:wght@400;500&display=swap"
+    rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
 
   <style>
-    /* === RESET & GLOBAL === */
     * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
       font-family: 'Poppins', sans-serif;
     }
 
-    html, body {
-      height: 100%;
-      height: 100dvh; /* dynamic viewport */
-      overflow: hidden;
-      background: linear-gradient(145deg, #fce7f3, #fbcfe8, #f5d0fe, #e9d5ff); /* default pink theme */
-      touch-action: pan-y pinch-zoom; /* allow vertical scroll, prevent double-tap zoom */
+    /* ===== Smooth animations for welcome screen ===== */
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-    /* Main app container – fills entire screen, flex column */
-    #chatApp {
-      height: 100%;
-      height: 100dvh;
-      display: flex;
-      flex-direction: column;
-      background: rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(24px);
-      border-left: 1px solid rgba(255,255,255,0.3);
-      border-right: 1px solid rgba(255,255,255,0.3);
-      box-shadow: 0 30px 60px -10px rgba(0,0,0,0.2);
-      max-width: 600px; /* optional, but keeps it centered on large screens */
-      margin: 0 auto;
-      width: 100%;
+    @keyframes fadeUp {
+      0% {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-    /* === HEADER === */
-    .chat-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 16px;
-      border-bottom: 1px solid rgba(255,255,255,0.3);
-      flex-shrink: 0;
+    .animate-fadeIn {
+      animation: fadeIn 1.2s ease forwards;
     }
 
-    /* === BIRTHDAY BANNER === */
-    .birthday-banner {
-      padding: 8px 12px;
-      text-align: center;
-      background: linear-gradient(90deg, #fbcfe8, #f9a8d4, #f472b6, #f9a8d4, #fbcfe8);
-      background-size: 400% 100%;
-      animation: shimmer 8s infinite linear;
-      color: #1f1a2e;
-      font-weight: 500;
-      font-size: 0.9rem;
-      border-bottom: 1px solid rgba(255,255,255,0.3);
-      flex-shrink: 0;
-      position: relative;
-      overflow: hidden;
+    .animate-fadeUp {
+      animation: fadeUp 1.6s ease forwards;
     }
 
-    @keyframes shimmer {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
+    /* ===== Chat message animation ===== */
+    .message-animation {
+      animation: fadeUp 0.3s ease;
     }
 
-    /* === MESSAGES AREA – takes remaining space, scrollable === */
+    /* ===== Custom scrollbar + SMOOTH SCROLL ===== */
+    #chat::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #chat::-webkit-scrollbar-track {
+      background: rgba(255, 255, 240, 0.1);
+      border-radius: 10px;
+    }
+
+    #chat::-webkit-scrollbar-thumb {
+      background: #ec4899;
+      border-radius: 10px;
+    }
+
     #chat {
-      flex: 1 1 0;
-      min-height: 0; /* critical for flex child to shrink */
-      overflow-y: auto;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
       scroll-behavior: smooth;
       -webkit-overflow-scrolling: touch;
     }
 
-    /* === MESSAGE WRAPPERS === */
-    .message-wrapper {
-      position: relative;
-      max-width: 85%; /* on mobile, messages take up to 85% width */
-      width: fit-content;
+    /* ===== Reaction picker (hover) ===== */
+    .reaction-picker {
+      display: none;
     }
 
-    .message-wrapper.left {
-      align-self: flex-start;
+    .message-wrapper:hover .reaction-picker {
+      display: flex;
     }
 
-    .message-wrapper.right {
-      align-self: flex-end;
-    }
-
-    /* Bubble styles */
+    /* ===== Chat bubbles – refined ===== */
     .bubble-left {
       background: rgba(255, 255, 255, 0.7);
       backdrop-filter: blur(8px);
       color: #1f1a2e;
       border-radius: 24px 24px 24px 8px;
-      padding: 12px 18px;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.02);
-      word-break: break-word;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.02);
     }
 
     .bubble-right {
@@ -121,126 +102,83 @@
       backdrop-filter: blur(8px);
       color: white;
       border-radius: 24px 24px 8px 24px;
-      padding: 12px 18px;
-      box-shadow: 0 6px 14px rgba(180,70,120,0.15);
-      word-break: break-word;
+      box-shadow: 0 6px 14px rgba(180, 70, 120, 0.15);
     }
 
-    /* Image message container */
-    .image-message {
-      position: relative;
-      display: inline-block;
-      max-width: 100%;
-      border-radius: 24px;
-      overflow: hidden;
-      background: rgba(255,255,255,0.3);
-      backdrop-filter: blur(4px);
-      border: 1px solid rgba(255,255,255,0.4);
+    /* ===== Online pulse ===== */
+    .status-pulse {
+      box-shadow: 0 0 0 0 rgba(230, 120, 160, 0.5);
+      animation: pulse-soft 2s infinite;
     }
 
-    .image-message img {
-      display: block;
-      width: 100%;
-      height: auto;
-      max-height: 300px;
-      object-fit: cover;
+    @keyframes pulse-soft {
+      70% {
+        box-shadow: 0 0 0 10px rgba(230, 120, 160, 0);
+      }
     }
 
-    /* Download button */
-    .download-btn {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(4px);
-      border: 1px solid rgba(255,255,255,0.6);
-      border-radius: 999px;
-      padding: 8px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      cursor: pointer;
-      transition: all 0.2s;
-      z-index: 10;
+    /* ===== Image loading blur ===== */
+    .img-load {
+      filter: blur(12px);
+      transition: filter 0.3s;
     }
 
-    .download-btn:hover {
-      background: white;
-      transform: scale(1.1);
+    .img-loaded {
+      filter: blur(0);
     }
 
-    .download-btn svg {
-      width: 18px;
-      height: 18px;
-      color: #ec4899;
+    /* ===== Floating hearts background (existing, subtle) ===== */
+    .heart-float {
+      position: fixed;
+      bottom: -40px;
+      color: rgba(255, 210, 230, 0.4);
+      pointer-events: none;
+      animation-name: floatUp;
+      animation-timing-function: linear;
+      animation-fill-mode: forwards;
+      z-index: 1;
     }
 
-    /* Timestamp */
-    .timestamp {
-      font-size: 0.7rem;
-      color: #666;
-      margin-top: 4px;
-      text-align: right;
-      display: flex;
-      justify-content: flex-end;
-      gap: 4px;
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+      }
+
+      10% {
+        opacity: 0.5;
+      }
+
+      100% {
+        transform: translateY(-120vh) rotate(25deg);
+        opacity: 0;
+      }
     }
 
-    /* Reaction picker (hidden by default, show on hover/tap) */
-    .reaction-picker {
-      display: none;
-      position: absolute;
-      bottom: -10px;
-      background: rgba(255,255,255,0.8);
-      backdrop-filter: blur(8px);
-      border-radius: 999px;
-      padding: 4px 8px;
-      gap: 8px;
-      z-index: 20;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    /* ===== SPECIAL LOVE HEARTS (bigger, brighter, fully opaque) ===== */
+    .love-heart-float {
+      position: fixed;
+      bottom: -40px;
+      pointer-events: none;
+      animation-name: floatUp;
+      animation-timing-function: ease-out;
+      animation-fill-mode: forwards;
+      z-index: 9999;
+      /* UI ke upar aayega */
+      color: #ff1493;
+      /* deep pink – solid & vibrant */
+      filter: drop-shadow(0 0 12px #ffb6c1);
+      /* soft glow, no blur on the heart itself */
+      text-shadow: 0 0 8px #fff8, 0 0 16px #ff99cc;
+      /* extra sparkle, still sharp */
+      will-change: transform, opacity;
+      opacity: 1 !important;
+      /* fully opaque */
+      font-weight: 500;
+      /* keep it crisp */
     }
 
-    .message-wrapper:hover .reaction-picker,
-    .message-wrapper:active .reaction-picker {
-      display: flex;
-    }
-
-    .reaction-picker button {
-      font-size: 1.2rem;
-      background: none;
-      border: none;
-      cursor: pointer;
-      transition: transform 0.1s;
-    }
-
-    .reaction-picker button:hover {
-      transform: scale(1.2);
-    }
-
-    /* Reaction badge */
-    .reaction-badge {
-      position: absolute;
-      bottom: -8px;
-      right: -8px;
-      background: rgba(255,255,255,0.8);
-      backdrop-filter: blur(4px);
-      border-radius: 999px;
-      padding: 2px 6px;
-      font-size: 0.8rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      z-index: 15;
-    }
-
-    /* === TYPING INDICATOR === */
-    #typing {
-      padding: 8px 16px;
-      font-size: 0.85rem;
-      color: #ec4899;
-      font-style: italic;
-      display: none;
-      align-items: center;
-      gap: 4px;
-      flex-shrink: 0;
-    }
-
+    /* ===== Typing dots ===== */
     .typing-dots::after {
       content: '...';
       animation: dots 1.5s steps(4, end) infinite;
@@ -249,336 +187,198 @@
     }
 
     @keyframes dots {
-      0%,20% { content: ''; }
-      40% { content: '.'; }
-      60% { content: '..'; }
-      80%,100% { content: '...'; }
+
+      0%,
+      20% {
+        content: '';
+      }
+
+      40% {
+        content: '.';
+      }
+
+      60% {
+        content: '..';
+      }
+
+      80%,
+      100% {
+        content: '...';
+      }
     }
 
-    /* === INPUT AREA – always at bottom === */
-    .input-area {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 16px;
-      border-top: 1px solid rgba(255,255,255,0.3);
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(8px);
-      flex-shrink: 0;
+    /* ===== Birthday countdown shimmer ===== */
+    @keyframes shimmer {
+      0% {
+        background-position: -200% 0;
+      }
+
+      100% {
+        background-position: 200% 0;
+      }
     }
 
-    .input-area label {
-      cursor: pointer;
-      color: #ec4899;
-      padding: 8px;
-      border-radius: 999px;
-      transition: background 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .birthday-shimmer {
+      background: linear-gradient(90deg, #fbcfe8, #f9a8d4, #f472b6, #f9a8d4, #fbcfe8);
+      background-size: 400% 100%;
+      animation: shimmer 8s infinite linear;
     }
 
-    .input-area label:hover {
-      background: rgba(255,255,255,0.3);
+    /* ===== Professional download button style ===== */
+    .download-btn {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
 
-    .input-area input[type="text"] {
-      flex: 1;
-      min-width: 0; /* prevents overflow */
-      background: rgba(255,255,255,0.7);
-      border: none;
-      border-radius: 999px;
-      padding: 12px 18px;
-      font-size: 1rem;
-      outline: none;
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+    .download-btn:hover {
+      background: rgba(255, 255, 255, 1);
+      transform: scale(1.1);
+      box-shadow: 0 8px 16px rgba(236, 72, 153, 0.3);
     }
 
-    .input-area button {
-      background: #ec4899;
-      color: white;
-      border: none;
-      border-radius: 999px;
-      padding: 12px 24px;
-      font-weight: 600;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.1s;
-      white-space: nowrap;
-      box-shadow: 0 4px 10px rgba(236,72,153,0.3);
-    }
-
-    .input-area button:active {
-      transform: scale(0.97);
-    }
-
-    /* Hide file input */
-    #image-upload {
-      display: none;
-    }
-
-    /* === WELCOME SCREEN === */
-    #welcomeScreen {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(145deg, #1e1035, #150d25, #0b0618);
-      z-index: 100;
-      transition: opacity 1s;
-      pointer-events: none; /* allow clicks to pass through after fade? We'll hide it after fade */
-    }
-
-    #welcomeScreen.visible {
-      pointer-events: auto;
-    }
-
-    .welcome-content {
-      text-align: center;
-      padding: 0 24px;
-      max-width: 400px;
-      color: white;
-    }
-
-    .welcome-content h1 {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #f9a8d4;
-      margin-bottom: 1rem;
-      animation: fadeIn 1.2s ease forwards;
-    }
-
-    .welcome-content p {
-      font-size: 1.1rem;
-      line-height: 1.6;
-      color: #d1d5db;
-      animation: fadeUp 1.6s ease forwards;
-    }
-
-    .spinner {
-      width: 48px;
-      height: 48px;
-      border: 4px solid #ec4899;
-      border-top-color: transparent;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 2rem auto 0;
-    }
-
-    @keyframes fadeIn {
-      0% { opacity: 0; transform: translateY(-20px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes fadeUp {
-      0% { opacity: 0; transform: translateY(30px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* === FLOATING HEARTS === */
-    #hearts-container {
-      position: fixed;
-      inset: 0;
-      overflow: hidden;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .heart-float {
-      position: absolute;
-      color: rgba(255, 210, 230, 0.3);
-      font-size: 20px;
-      animation: floatUp 12s linear infinite;
-    }
-
-    @keyframes floatUp {
-      0% { transform: translateY(110vh) rotate(0deg); opacity:0; }
-      20% { opacity:0.4; }
-      100% { transform: translateY(-20vh) rotate(15deg); opacity:0; }
-    }
-
-    /* === AVATAR & STATUS === */
-    .avatar {
-      width: 44px;
-      height: 44px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, #fbcfe8, #e9d5ff);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      border: 2px solid rgba(255,255,255,0.6);
-    }
-
-    .avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .status-dot {
-      width: 10px;
-      height: 10px;
-      background: #10b981;
-      border-radius: 999px;
-      border: 2px solid white;
-      position: absolute;
-      bottom: 0;
-      right: 0;
-    }
-
-    .status-pulse {
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(16,185,129,0.5); }
-      70% { box-shadow: 0 0 0 8px rgba(16,185,129,0); }
-    }
-
-    /* === THEME BUTTONS === */
-    .theme-btn {
-      width: 32px;
-      height: 32px;
-      border-radius: 999px;
-      border: 2px solid white;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    .download-btn svg {
       transition: transform 0.2s;
-      cursor: pointer;
     }
 
-    .theme-btn:hover {
-      transform: scale(1.15);
-    }
-
-    /* === MEDIA QUERIES FOR VERY SMALL SCREENS === */
-    @media (max-width: 400px) {
-      .input-area button {
-        padding: 12px 16px;
-        font-size: 0.9rem;
-      }
-      .chat-header h1 {
-        font-size: 1.1rem;
-      }
+    .download-btn:hover svg {
+      transform: translateY(2px);
     }
   </style>
 </head>
-<body>
 
-  <!-- Floating hearts background -->
-  <div id="hearts-container"></div>
+<body class="h-screen w-screen overflow-hidden relative">
 
-  <!-- Welcome Screen -->
-  <div id="welcomeScreen" class="visible">
-    <div class="welcome-content">
-      <h1>Welcome Shreya 💖</h1>
-      <p>
+  <!-- Container for floating hearts (background + love hearts) -->
+  <div id="hearts-container" class="fixed inset-0 overflow-hidden pointer-events-none" style="z-index:9999;"></div>
+
+  <!-- ========== WELCOME SCREEN ========== -->
+  <div id="welcomeScreen"
+    class="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-[#1e1035] via-[#150d25] to-[#0b0618] z-50 transition-opacity duration-1000">
+    <div class="text-center px-6 max-w-md">
+      <h1 class="text-4xl md:text-5xl font-bold text-pink-400 mb-6 animate-fadeIn">Welcome Shreya 💖</h1>
+      <p class="text-gray-300 text-lg leading-relaxed animate-fadeUp">
         This private space is only for you, Shreya.<br>
         Every message carries my heartbeat,<br>
         every second feels closer to you,<br>
         and every word here is meant to make you smile.
       </p>
-      <div class="spinner"></div>
+      <div class="mt-10">
+        <div class="w-14 h-14 border-4 border-pink-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+      </div>
     </div>
   </div>
 
-  <!-- Main Chat App -->
-  <div id="chatApp">
-    <!-- Header -->
-    <div class="chat-header">
-      <div style="display: flex; align-items: center; gap: 12px;">
-        <div class="avatar">
-          <img src="https://i.pravatar.cc/100?u=shreya" alt="Shreya">
+  <!-- ========== MAIN CHAT ========== -->
+  <div id="chatApp"
+    class="w-full h-screen max-w-3xl mx-auto chat-pavilion flex flex-col relative z-10 shadow-2xl opacity-100"
+    style="background: rgba(255,255,255,0.15); backdrop-filter: blur(24px); border-left:1px solid rgba(255,255,255,0.3); border-right:1px solid rgba(255,255,255,0.3); box-shadow:0 30px 60px -10px rgba(0,0,0,0.2);">
+
+    <!-- HEADER -->
+    <div class="px-4 py-3 flex items-center justify-between border-b border-white/30">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full overflow-hidden ring-2 ring-white/60">
+          <img src="https://images.unsplash.com/photo-1529636798458-92182e662485" class="w-full h-full object-cover"
+            alt="couple">
         </div>
-        <div style="position: relative;">
-          <span class="status-dot status-pulse"></span>
-        </div>
-        <div>
-          <h1 style="font-size: 1.2rem; font-weight: 500; color: #1f1a2e;">Shreya <span style="font-family: 'Playfair Display'; color: #ec4899;">·</span> Himanshu</h1>
-          <div id="status-text" style="display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: #4b5563;">
-            <span style="width: 8px; height: 8px; background: #10b981; border-radius: 999px;"></span>
-            <span>online now</span>
-          </div>
+        <div class="flex flex-col leading-tight">
+          <span class="text-sm sm:text-base md:text-lg text-gray-800"
+            style="font-family:'Playfair Display', serif;">Shreya</span>
+          <span class="text-xs sm:text-sm text-pink-500" style="font-family:'Poppins', sans-serif;">Himanshu</span>
         </div>
       </div>
-      <div style="display: flex; gap: 8px;">
-        <button onclick="setTheme('pink')" class="theme-btn" style="background: #fbcfe8;" title="Rose glow"></button>
-        <button onclick="setTheme('midnight')" class="theme-btn" style="background: #1e1b4b;" title="Midnight"></button>
-        <button onclick="setTheme('pastel')" class="theme-btn" style="background: #e9d5ff;" title="Soft mist"></button>
+      <div class="flex gap-1.5">
+        <button onclick="setTheme('pink')"
+          class="w-7 h-7 rounded-full bg-rose-200 border border-white shadow-md hover:scale-110 transition"></button>
+        <button onclick="setTheme('midnight')"
+          class="w-7 h-7 rounded-full bg-indigo-800 border border-white shadow-md hover:scale-110 transition"></button>
+        <button onclick="setTheme('pastel')"
+          class="w-7 h-7 rounded-full bg-purple-200 border border-white shadow-md hover:scale-110 transition"></button>
       </div>
     </div>
 
-    <!-- Birthday Banner -->
-    <div class="birthday-banner">
+    <!-- BIRTHDAY COUNTDOWN BANNER -->
+    <div id="birthday-banner"
+      class="px-3 py-2 text-center bg-gradient-to-r from-pink-200 via-purple-200 to-pink-200 text-gray-800 font-medium text-sm md:text-base relative overflow-hidden border-b border-white/30 birthday-shimmer">
       <span id="countdown-timer">🎂 loading...</span> until Shreya's Birthday 🎉🎈
-      <div style="position: absolute; inset: 0; display: flex; justify-content: space-between; align-items: center; padding: 0 8px; color: rgba(255,255,255,0.2); font-size: 1.2rem; pointer-events: none;">
+      <div class="absolute inset-0 pointer-events-none text-white/20 text-2xl flex justify-between px-2 items-center">
         <span>🎂</span><span>🎈</span><span>🎁</span><span>✨</span><span>🌸</span>
       </div>
     </div>
 
-    <!-- Messages -->
-    <div id="chat"></div>
+    <!-- CHAT MESSAGES -->
+    <div id="chat" class="flex-1 overflow-y-auto p-4 space-y-3 scroll-smooth"></div>
 
-    <!-- Typing Indicator -->
-    <div id="typing">
+    <!-- TYPING INDICATOR -->
+    <div id="typing" class="px-5 py-1.5 text-sm text-rose-600 hidden items-center gap-1.5 italic"
+      style="font-family:'Playfair Display';">
       <span id="typing-text">Himanshu is writing</span>
       <span class="typing-dots"></span>
     </div>
 
-    <!-- Input Area -->
-    <div class="input-area">
-      <label for="image-upload">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="2" y="2" width="20" height="20" rx="2" ry="2"></rect>
-          <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"></circle>
-          <polyline points="21 15 16 10 5 21"></polyline>
+    <!-- INPUT AREA -->
+    <div class="p-3 border-t border-white/30 flex gap-2 items-center bg-white/5 backdrop-blur-sm">
+      <label for="image-upload"
+        class="cursor-pointer text-rose-400 hover:text-rose-500 transition p-2.5 rounded-full hover:bg-white/20">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+          stroke-width="1.7">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
         </svg>
       </label>
-      <input id="image-upload" type="file" accept="image/*">
-      <input type="text" id="messageInput" placeholder="whisper something... 💫" autocomplete="off">
-      <button onclick="sendMessage()">Send</button>
+      <input id="image-upload" type="file" accept="image/*" class="hidden">
+      <input id="messageInput"
+        class="flex-1 rounded-full px-5 py-3 focus:outline-none bg-white/60 placeholder-gray-400 text-sm shadow-inner border-0"
+        placeholder=" whisper something... 💫" />
+      <button onclick="sendMessage()"
+        class="bg-rose-400/80 hover:bg-rose-500 text-white px-6 py-3 rounded-full transition active:scale-95 shadow-lg font-medium backdrop-blur-sm">Send</button>
     </div>
   </div>
 
   <script>
-    (function() {
+    (function () {
       // --- Configuration ---
       const chatId = "shreya-himanshu";
-      const myUsername = "Shreya"; // Change to "Himanshu" for other client
+      const myUsername = "Shreya"; // change to "Himanshu" for other client
       const otherUsername = "Himanshu";
 
-      // WebSocket & Backend URLs (Production)
+      // --- WebSocket connection ---
       const ws = new WebSocket(`wss://tgbackend-0u91.onrender.com/ws/${chatId}?username=${myUsername}`);
-      const backendBase = "https://tgbackend-0u91.onrender.com";
+      const backendBase = (() => {
+        const url = new URL(ws.url);
+        return `${url.protocol === 'ws:' ? 'http:' : 'https:'}//${url.host}`;
+      })();
+      console.log('✅ Backend base:', backendBase);
 
-      // DOM Elements
+      // --- DOM elements ---
       const chatBox = document.getElementById("chat");
       const typingDiv = document.getElementById("typing");
       const typingText = document.getElementById("typing-text");
       const input = document.getElementById("messageInput");
-      const statusText = document.getElementById("status-text");
-      const welcomeScreen = document.getElementById("welcomeScreen");
+      const statusText = document.getElementById("status-text"); // not used but kept
+      const welcomeScreen = document.getElementById('welcomeScreen');
+      const heartsContainer = document.getElementById('hearts-container');
 
-      // Map for message elements
+      // --- messages map for reactions ---
       const messages = new Map();
 
-      // Sound
+      // --- SOUND EFFECTS ---
       const SOUND_URL = 'NOTIFY.mp3';
+
       function playSound() {
         try {
           const audio = new Audio(SOUND_URL);
           audio.volume = 0.6;
           audio.play().catch(e => console.log('Audio play failed', e));
-        } catch (e) { console.warn('Sound error', e); }
+        } catch (e) {
+          console.warn('Sound error', e);
+        }
       }
 
-      // Floating hearts
-      function createHeart() {
+      // --- BACKGROUND FLOATING HEARTS (subtle) ---
+      function createBackgroundHeart() {
         const heart = document.createElement('div');
         heart.className = 'heart-float';
         const symbols = ['❤️', '💧', '🌸', '✨', '🕊️', '🌙'];
@@ -587,20 +387,70 @@
         heart.style.animationDuration = (8 + Math.random() * 8) + 's';
         heart.style.fontSize = (12 + Math.random() * 20) + 'px';
         heart.style.opacity = 0.15 + Math.random() * 0.25;
-        document.getElementById('hearts-container').appendChild(heart);
+        heartsContainer.appendChild(heart);
         setTimeout(() => heart.remove(), 11000);
       }
-      setInterval(createHeart, 600);
+      setInterval(createBackgroundHeart, 600);
 
-      // Hide welcome screen after 3 seconds
+      // --- ✨ SPECIAL LOVE HEARTS (triggered by keywords) – now fully opaque and crisp ---
+      function triggerLoveHearts(count = 7) {
+        const loveSymbols = [
+          '❤️', '💖', '💕', '💗', '💓', '💘', '💝', '💞', '❣️',
+          '🌸', '🌹', '🌺', '🌷', '💐', '🌼',
+          '✨', '💫', '🌟', '🌙', '☁️',
+          '🥰', '😍', '😘', '😻', '😇'
+        ];
+        for (let i = 0; i < count; i++) {
+          const heart = document.createElement('div');
+          heart.className = 'love-heart-float';
+          heart.innerHTML = loveSymbols[Math.floor(Math.random() * loveSymbols.length)];
+          heart.style.left = Math.random() * 100 + '%';
+          // bigger size range: 30px to 70px
+          const fontSize = 30 + Math.floor(Math.random() * 40);
+          heart.style.fontSize = fontSize + 'px';
+          // slight random rotation for organic feel
+          heart.style.transform = `rotate(${Math.random() * 40 - 20}deg)`;
+          // FULL OPAQUE – no transparency
+          heart.style.opacity = 1;
+          // duration between 4s and 9s (smooth but not too fast)
+          const duration = 4 + Math.random() * 6;
+          heart.style.animationDuration = duration + 's';
+          heartsContainer.appendChild(heart);
+          setTimeout(() => {
+            if (heart.parentNode) heart.remove();
+          }, duration * 1000 + 300);
+        }
+      }
+
+      // --- Check message for love keywords and trigger hearts ---
+      function checkForLoveWords(data) {
+        if (data.type !== 'message' || !data.text) return;
+        const text = data.text.toLowerCase();
+        const triggerWords = ['love', 'shreya', 'shreyu', 'himanshu', '❤️', '💖', '💕', '😍', '🥰', 'miss', 'baby',
+          'babu', 'sweet'
+        ];
+        let matchCount = 0;
+        triggerWords.forEach(word => {
+          if (text.includes(word.toLowerCase())) matchCount++;
+        });
+        if (matchCount > 0) {
+          // base 5 hearts + 2 per extra word, max 15
+          let heartCount = Math.min(5 + matchCount * 2, 15);
+          triggerLoveHearts(heartCount);
+        }
+      }
+
+      // --- WELCOME SCREEN FADE OUT ---
       setTimeout(() => {
-        welcomeScreen.style.opacity = '0';
-        setTimeout(() => {
-          welcomeScreen.style.display = 'none';
-        }, 1000);
+        if (welcomeScreen) {
+          welcomeScreen.style.opacity = '0';
+          setTimeout(() => {
+            welcomeScreen.style.display = 'none';
+          }, 1000);
+        }
       }, 3000);
 
-      // Birthday countdown (June 18)
+      // --- BIRTHDAY COUNTDOWN (18 June) ---
       function updateBirthdayCountdown() {
         const now = new Date();
         const currentYear = now.getFullYear();
@@ -610,9 +460,10 @@
         }
         const diffMs = birthday - now;
         const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-        const diffHrs = Math.floor((diffMs % (86400000)) / (3600000));
-        const diffMins = Math.floor((diffMs % 3600000) / 60000);
-        const diffSecs = Math.floor((diffMs % 60000) / 1000);
+        const diffHrs = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+        const diffSecs = Math.floor((diffMs % (1000 * 60)) / 1000);
+
         let countdownStr = '';
         if (diffDays === 0 && diffHrs === 0 && diffMins === 0 && diffSecs === 0) {
           countdownStr = '🎉 TODAY IS THE DAY! 🎉';
@@ -624,102 +475,105 @@
       updateBirthdayCountdown();
       setInterval(updateBirthdayCountdown, 1000);
 
-      // Download image
-      window.downloadImage = async function(imageUrl) {
+      // --- DOWNLOAD IMAGE FUNCTION ---
+      window.downloadImage = async function (imageUrl) {
         try {
+          const link = document.createElement('a');
+          link.style.display = 'none';
+          document.body.appendChild(link);
           const response = await fetch(imageUrl);
           const blob = await response.blob();
           const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = 'shreya-himanshu-image.jpg';
-          document.body.appendChild(a);
-          a.click();
+          link.href = url;
+          link.download = 'shreya-himanshu-image.jpg';
+          link.click();
           setTimeout(() => {
-            document.body.removeChild(a);
             URL.revokeObjectURL(url);
+            document.body.removeChild(link);
           }, 100);
         } catch (err) {
-          console.error('Download failed', err);
+          console.error('Download failed, opening in new tab:', err);
           window.open(imageUrl, '_blank');
         }
       };
 
-      // Add message to UI
+      // --- ADD MESSAGE (with love heart trigger) ---
       function addMessage(data, isOther) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = `message-wrapper ${isOther ? 'left' : 'right'}`;
+        const messageDiv = document.createElement("div");
+        messageDiv.className = `message-wrapper relative ${isOther ? 'text-left' : 'text-right'} message-animation`;
         messageDiv.dataset.id = data.id;
 
-        let contentHtml = '';
+        let content = '';
         if (data.type === 'image') {
           const imageUrl = data.url.startsWith('/') ? backendBase + data.url : data.url;
           const escapedUrl = imageUrl.replace(/'/g, "\\'");
-          contentHtml = `
-            <div class="image-message">
-              <img src="${imageUrl}" alt="image" loading="lazy" onload="this.classList.add('loaded')" onerror="this.src='https://via.placeholder.com/200?text=Error'">
-              <button class="download-btn" onclick="downloadImage('${escapedUrl}')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 4v12m0 0l-3-3m3 3l3-3" />
-                </svg>
-              </button>
-            </div>
-          `;
+          content = `<div class="relative inline-block max-w-xs rounded-3xl shadow-md overflow-hidden bg-white/30 backdrop-blur-sm border border-white/40">
+            <img src="${imageUrl}" class="w-full h-auto img-load" 
+                 onload="this.classList.remove('img-load'); this.classList.add('img-loaded');" 
+                 onerror="this.onerror=null; this.src='https://via.placeholder.com/200?text=Image+failed';" />
+            <button onclick="downloadImage('${escapedUrl}')" class="download-btn absolute top-2 right-2 rounded-full p-2.5 z-20 group" title="Save image to device">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 4v12m0 0l-3-3m3 3l3-3" />
+              </svg>
+            </button>
+          </div>`;
         } else {
           const bubbleClass = isOther ? 'bubble-left' : 'bubble-right';
-          contentHtml = `<div class="${bubbleClass}">${data.text}</div>`;
+          content =
+            `<div class="${bubbleClass} inline-block px-5 py-3 max-w-xs shadow-lg backdrop-blur-sm">${data.text}</div>`;
         }
 
         const now = new Date();
-        const timestamp = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const receipt = !isOther ? '<span>✓✓</span>' : '';
+        const timestamp = now.toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        const receipt = !isOther ? '<span class="text-xs ml-1.5 text-white/70">✓✓</span>' : '';
 
         const reactionPicker = `
-          <div class="reaction-picker" style="${isOther ? 'left:0' : 'right:0'}">
-            <button onclick="sendReaction('${data.id}', '❤️')">❤️</button>
-            <button onclick="sendReaction('${data.id}', '🥺')">🥺</button>
-            <button onclick="sendReaction('${data.id}', '😏')">😏</button>
-            <button onclick="sendReaction('${data.id}', '🕊️')">🕊️</button>
-          </div>
-        `;
+        <div class="reaction-picker absolute bottom-0 ${isOther ? 'left-0' : 'right-0'} -translate-y-2 bg-white/70 backdrop-blur-sm rounded-full px-1.5 py-0.5 gap-1 text-lg z-10 shadow-md">
+          <button onclick="sendReaction('${data.id}', '❤️')" class="reaction-btn hover:scale-125 transition">❤️</button>
+          <button onclick="sendReaction('${data.id}', '🥺')" class="reaction-btn hover:scale-125 transition">🥺</button>
+          <button onclick="sendReaction('${data.id}', '😏')" class="reaction-btn hover:scale-125 transition">😏</button>
+          <button onclick="sendReaction('${data.id}', '🕊️')" class="reaction-btn hover:scale-125 transition">🕊️</button>
+        </div>`;
 
-        messageDiv.innerHTML = `
-          ${contentHtml}
-          <div class="timestamp">
-            <span>${timestamp}</span>${receipt}
-          </div>
-          ${reactionPicker}
-        `;
-
+        messageDiv.innerHTML =
+          `${content}<div class="text-xs text-gray-400 mt-1 flex items-center justify-end gap-1"><span>${timestamp}</span>${receipt}</div>${reactionPicker}`;
         chatBox.appendChild(messageDiv);
-        chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
+        chatBox.scrollTo({
+          top: chatBox.scrollHeight,
+          behavior: 'smooth'
+        });
         messages.set(data.id, messageDiv);
+
+        // ✨ TRIGGER LOVE HEARTS if message contains keywords
+        checkForLoveWords(data);
       }
 
-      // WebSocket handlers
-      ws.onmessage = function(event) {
+      // --- WebSocket message handler ---
+      ws.onmessage = function (event) {
         const data = JSON.parse(event.data);
-        console.log("Received:", data);
+        console.log("📩 Received:", data);
 
-        switch(data.type) {
+        switch (data.type) {
           case "message":
             addMessage(data, data.sender !== myUsername);
             if (data.sender !== myUsername) playSound();
             setTimeout(() => {
-              ws.send(JSON.stringify({ type: "read", messageId: data.id }));
+              ws.send(JSON.stringify({
+                type: "read",
+                messageId: data.id
+              }));
             }, 1000);
             break;
           case "typing":
-            const phrases = [
-              "Himanshu is thinking of you",
-              "Himanshu is smiling",
-              "Your prince writes...",
-              "Himanshu sends a whisper",
-              "Himanshu is dreaming"
+            const phrases = ["Himanshu is thinking of you", "Himanshu is smiling", "Your prince writes...",
+              "Himanshu sends a whisper", "Himanshu is dreaming"
             ];
             typingText.innerText = phrases[Math.floor(Math.random() * phrases.length)];
-            typingDiv.style.display = 'flex';
-            setTimeout(() => typingDiv.style.display = 'none', 2500);
+            typingDiv.classList.remove("hidden");
+            setTimeout(() => typingDiv.classList.add("hidden"), 2500);
             break;
           case "reaction":
             applyReaction(data.messageId, data.emoji);
@@ -734,11 +588,13 @@
             addMessage(data, data.sender !== myUsername);
             if (data.sender !== myUsername) playSound();
             break;
+          default:
+            break;
         }
       };
 
-      // Send message
-      window.sendMessage = function() {
+      // --- send message ---
+      window.sendMessage = function () {
         const text = input.value.trim();
         if (!text) return;
 
@@ -749,18 +605,16 @@
           text: text,
           sender: myUsername
         };
-
         addMessage(message, false);
         ws.send(JSON.stringify(message));
         playSound();
         input.value = "";
       };
 
-      // Image upload
-      document.getElementById('image-upload').addEventListener('change', function(e) {
+      // --- image upload ---
+      document.getElementById('image-upload').addEventListener('change', function (e) {
         const file = e.target.files[0];
         if (!file) return;
-
         const reader = new FileReader();
         reader.onload = (e) => {
           const id = Date.now() + '-' + Math.random().toString(36);
@@ -778,53 +632,64 @@
         this.value = '';
       });
 
-      // Reactions
-      window.sendReaction = function(messageId, emoji) {
-        ws.send(JSON.stringify({ type: "reaction", messageId, emoji }));
+      // --- reaction functions ---
+      window.sendReaction = function (messageId, emoji) {
+        ws.send(JSON.stringify({
+          type: "reaction",
+          messageId: messageId,
+          emoji: emoji
+        }));
         applyReaction(messageId, emoji);
       };
 
       function applyReaction(messageId, emoji) {
         const msgDiv = messages.get(messageId);
         if (!msgDiv) return;
-        let badge = msgDiv.querySelector('.reaction-badge');
-        if (badge) badge.remove();
-        badge = document.createElement('div');
-        badge.className = 'reaction-badge';
-        badge.textContent = emoji;
-        msgDiv.appendChild(badge);
+        let reactionBadge = msgDiv.querySelector('.reaction-badge');
+        if (reactionBadge) reactionBadge.remove();
+        reactionBadge = document.createElement('div');
+        reactionBadge.className =
+          'reaction-badge absolute -bottom-2 -right-2 bg-white/70 backdrop-blur-sm rounded-full px-1.5 text-sm shadow-md z-20';
+        reactionBadge.textContent = emoji;
+        msgDiv.appendChild(reactionBadge);
       }
 
       function markAsRead(messageId) {
         const msgDiv = messages.get(messageId);
         if (!msgDiv) return;
-        const receiptSpan = msgDiv.querySelector('.timestamp span:last-child');
+        const receiptSpan = msgDiv.querySelector('.text-gray-400 span:last-child');
         if (receiptSpan) receiptSpan.textContent = '✓✓';
       }
 
       function updateStatus(user, status, lastSeen) {
-        if (user === otherUsername) {
+        if (user === otherUsername && statusText) {
           if (status === 'online') {
-            statusText.innerHTML = '<span style="width:8px;height:8px;background:#10b981;border-radius:999px;"></span><span>online now</span>';
+            statusText.innerHTML =
+              '<span class="inline-block w-1.5 h-1.5 bg-emerald-400 rounded-full"></span><span class="ml-1">online now</span>';
           } else {
-            const last = lastSeen ? new Date(lastSeen).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}) : 'recently';
-            statusText.innerHTML = '<span style="width:8px;height:8px;background:#9ca3af;border-radius:999px;"></span><span>last seen ' + last + '</span>';
+            const last = lastSeen ? new Date(lastSeen).toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit'
+            }) : 'recently';
+            statusText.innerHTML =
+              '<span class="inline-block w-1.5 h-1.5 bg-gray-400 rounded-full"></span><span class="ml-1">last seen ' +
+              last + '</span>';
           }
         }
       }
 
-      // Typing indicator
-      input.addEventListener('input', () => {
-        ws.send(JSON.stringify({ type: "typing" }));
+      // --- typing indicator ---
+      input.addEventListener("input", () => {
+        ws.send(JSON.stringify({
+          type: "typing"
+        }));
+      });
+      input.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") sendMessage();
       });
 
-      // Enter to send
-      input.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendMessage();
-      });
-
-      // Theme switcher
-      window.setTheme = function(theme) {
+      // --- theme switcher ---
+      window.setTheme = function (theme) {
         const body = document.body;
         if (theme === 'pink') {
           body.style.background = 'linear-gradient(145deg, #fce7f3, #fbcfe8, #f5d0fe, #e9d5ff)';
@@ -835,10 +700,10 @@
         }
       };
 
-      ws.onopen = () => console.log("Connected");
-      ws.onerror = (err) => console.error("WebSocket error", err);
+      ws.onopen = () => console.log("💫 Connected");
+      ws.onerror = (err) => console.error("❌ WebSocket error", err);
     })();
   </script>
 </body>
-</html>
 
+</html>
