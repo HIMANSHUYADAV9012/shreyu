@@ -249,265 +249,264 @@
   </style>
 </head>
 
-<body class="h-screen w-screen overflow-hidden relative">
+<body class="min-h-[100dvh] w-full overflow-hidden relative"></body>
 
-  <!-- Container for floating hearts (background + love hearts) -->
-  <div id="hearts-container" class="fixed inset-0 overflow-hidden pointer-events-none" style="z-index:9999;"></div>
+<!-- Container for floating hearts (background + love hearts) -->
+<div id="hearts-container" class="fixed inset-0 overflow-hidden pointer-events-none" style="z-index:9999;"></div>
 
-  <!-- ========== WELCOME SCREEN ========== -->
-  <div id="welcomeScreen"
-    class="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-[#1e1035] via-[#150d25] to-[#0b0618] z-50 transition-opacity duration-1000">
-    <div class="text-center px-6 max-w-md">
-      <h1 class="text-4xl md:text-5xl font-bold text-pink-400 mb-6 animate-fadeIn">Welcome Shreya 💖</h1>
-      <p class="text-gray-300 text-lg leading-relaxed animate-fadeUp">
-        This private space is only for you, Shreya.<br>
-        Every message carries my heartbeat,<br>
-        every second feels closer to you,<br>
-        and every word here is meant to make you smile.
-      </p>
-      <div class="mt-10">
-        <div class="w-14 h-14 border-4 border-pink-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+<!-- ========== WELCOME SCREEN ========== -->
+<div id="welcomeScreen"
+  class="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-[#1e1035] via-[#150d25] to-[#0b0618] z-50 transition-opacity duration-1000">
+  <div class="text-center px-6 max-w-md">
+    <h1 class="text-4xl md:text-5xl font-bold text-pink-400 mb-6 animate-fadeIn">Welcome Shreya 💖</h1>
+    <p class="text-gray-300 text-lg leading-relaxed animate-fadeUp">
+      This private space is only for you, Shreya.<br>
+      Every message carries my heartbeat,<br>
+      every second feels closer to you,<br>
+      and every word here is meant to make you smile.
+    </p>
+    <div class="mt-10">
+      <div class="w-14 h-14 border-4 border-pink-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== MAIN CHAT ========== -->
+<div id="chatApp" class="w-full min-h-[100dvh] max-w-3xl mx-auto flex flex-col relative"
+  style="background: rgba(255,255,255,0.15); backdrop-filter: blur(24px); border-left:1px solid rgba(255,255,255,0.3); border-right:1px solid rgba(255,255,255,0.3); box-shadow:0 30px 60px -10px rgba(0,0,0,0.2);">
+
+  <!-- HEADER -->
+  <div class="px-4 py-3 flex items-center justify-between border-b border-white/30">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full overflow-hidden ring-2 ring-white/60">
+        <img src="https://images.unsplash.com/photo-1529636798458-92182e662485" class="w-full h-full object-cover"
+          alt="couple">
       </div>
+      <div class="flex flex-col leading-tight">
+        <span class="text-sm sm:text-base md:text-lg text-gray-800"
+          style="font-family:'Playfair Display', serif;">Shreya</span>
+        <span class="text-xs sm:text-sm text-pink-500" style="font-family:'Poppins', sans-serif;">Himanshu</span>
+      </div>
+    </div>
+    <div class="flex gap-1.5">
+      <button onclick="setTheme('pink')"
+        class="w-7 h-7 rounded-full bg-rose-200 border border-white shadow-md hover:scale-110 transition"></button>
+      <button onclick="setTheme('midnight')"
+        class="w-7 h-7 rounded-full bg-indigo-800 border border-white shadow-md hover:scale-110 transition"></button>
+      <button onclick="setTheme('pastel')"
+        class="w-7 h-7 rounded-full bg-purple-200 border border-white shadow-md hover:scale-110 transition"></button>
     </div>
   </div>
 
-  <!-- ========== MAIN CHAT ========== -->
-  <div id="chatApp"
-    class="w-full h-screen max-w-3xl mx-auto chat-pavilion flex flex-col relative z-10 shadow-2xl opacity-100"
-    style="background: rgba(255,255,255,0.15); backdrop-filter: blur(24px); border-left:1px solid rgba(255,255,255,0.3); border-right:1px solid rgba(255,255,255,0.3); box-shadow:0 30px 60px -10px rgba(0,0,0,0.2);">
-
-    <!-- HEADER -->
-    <div class="px-4 py-3 flex items-center justify-between border-b border-white/30">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full overflow-hidden ring-2 ring-white/60">
-          <img src="https://images.unsplash.com/photo-1529636798458-92182e662485" class="w-full h-full object-cover"
-            alt="couple">
-        </div>
-        <div class="flex flex-col leading-tight">
-          <span class="text-sm sm:text-base md:text-lg text-gray-800"
-            style="font-family:'Playfair Display', serif;">Shreya</span>
-          <span class="text-xs sm:text-sm text-pink-500" style="font-family:'Poppins', sans-serif;">Himanshu</span>
-        </div>
-      </div>
-      <div class="flex gap-1.5">
-        <button onclick="setTheme('pink')"
-          class="w-7 h-7 rounded-full bg-rose-200 border border-white shadow-md hover:scale-110 transition"></button>
-        <button onclick="setTheme('midnight')"
-          class="w-7 h-7 rounded-full bg-indigo-800 border border-white shadow-md hover:scale-110 transition"></button>
-        <button onclick="setTheme('pastel')"
-          class="w-7 h-7 rounded-full bg-purple-200 border border-white shadow-md hover:scale-110 transition"></button>
-      </div>
-    </div>
-
-    <!-- BIRTHDAY COUNTDOWN BANNER -->
-    <div id="birthday-banner"
-      class="px-3 py-2 text-center bg-gradient-to-r from-pink-200 via-purple-200 to-pink-200 text-gray-800 font-medium text-sm md:text-base relative overflow-hidden border-b border-white/30 birthday-shimmer">
-      <span id="countdown-timer">🎂 loading...</span> until Shreya's Birthday 🎉🎈
-      <div class="absolute inset-0 pointer-events-none text-white/20 text-2xl flex justify-between px-2 items-center">
-        <span>🎂</span><span>🎈</span><span>🎁</span><span>✨</span><span>🌸</span>
-      </div>
-    </div>
-
-    <!-- CHAT MESSAGES -->
-    <div id="chat" class="flex-1 overflow-y-auto p-4 space-y-3 scroll-smooth"></div>
-
-    <!-- TYPING INDICATOR -->
-    <div id="typing" class="px-5 py-1.5 text-sm text-rose-600 hidden items-center gap-1.5 italic"
-      style="font-family:'Playfair Display';">
-      <span id="typing-text">Himanshu is writing</span>
-      <span class="typing-dots"></span>
-    </div>
-
-    <!-- INPUT AREA -->
-    <div class="p-3 border-t border-white/30 flex gap-2 items-center bg-white/5 backdrop-blur-sm">
-      <label for="image-upload"
-        class="cursor-pointer text-rose-400 hover:text-rose-500 transition p-2.5 rounded-full hover:bg-white/20">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-          stroke-width="1.7">
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-      </label>
-      <input id="image-upload" type="file" accept="image/*" class="hidden">
-      <input id="messageInput"
-        class="flex-1 rounded-full px-5 py-3 focus:outline-none bg-white/60 placeholder-gray-400 text-sm shadow-inner border-0"
-        placeholder=" whisper something... 💫" />
-      <button onclick="sendMessage()"
-        class="bg-rose-400/80 hover:bg-rose-500 text-white px-6 py-3 rounded-full transition active:scale-95 shadow-lg font-medium backdrop-blur-sm">Send</button>
+  <!-- BIRTHDAY COUNTDOWN BANNER -->
+  <div id="birthday-banner"
+    class="px-3 py-2 text-center bg-gradient-to-r from-pink-200 via-purple-200 to-pink-200 text-gray-800 font-medium text-sm md:text-base relative overflow-hidden border-b border-white/30 birthday-shimmer">
+    <span id="countdown-timer">🎂 loading...</span> until Shreya's Birthday 🎉🎈
+    <div class="absolute inset-0 pointer-events-none text-white/20 text-2xl flex justify-between px-2 items-center">
+      <span>🎂</span><span>🎈</span><span>🎁</span><span>✨</span><span>🌸</span>
     </div>
   </div>
 
-  <script>
-    (function () {
-      // --- Configuration ---
-      const chatId = "shreya-himanshu";
-      const myUsername = "Shreya"; // change to "Himanshu" for other client
-      const otherUsername = "Himanshu";
+  <!-- CHAT MESSAGES -->
+  <div id="chat" class="flex-1 overflow-y-auto p-4 space-y-3 pb-24"></div>
 
-      // --- WebSocket connection ---
-      const ws = new WebSocket(`wss://tgbackend-0u91.onrender.com/ws/${chatId}?username=${myUsername}`);
-      const backendBase = (() => {
-        const url = new URL(ws.url);
-        return `${url.protocol === 'ws:' ? 'http:' : 'https:'}//${url.host}`;
-      })();
-      console.log('✅ Backend base:', backendBase);
+  <!-- TYPING INDICATOR -->
+  <div id="typing" class="px-5 py-1.5 text-sm text-rose-600 hidden items-center gap-1.5 italic"
+    style="font-family:'Playfair Display';">
+    <span id="typing-text">Himanshu is writing</span>
+    <span class="typing-dots"></span>
+  </div>
 
-      // --- DOM elements ---
-      const chatBox = document.getElementById("chat");
-      const typingDiv = document.getElementById("typing");
-      const typingText = document.getElementById("typing-text");
-      const input = document.getElementById("messageInput");
-      const statusText = document.getElementById("status-text"); // not used but kept
-      const welcomeScreen = document.getElementById('welcomeScreen');
-      const heartsContainer = document.getElementById('hearts-container');
+  <!-- INPUT AREA -->
+  <div class="p-3 border-t border-white/30 flex gap-2 items-center sticky bottom-0">
+    <label for="image-upload"
+      class="cursor-pointer text-rose-400 hover:text-rose-500 transition p-2.5 rounded-full hover:bg-white/20">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+        stroke-width="1.7">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      </svg>
+    </label>
+    <input id="image-upload" type="file" accept="image/*" class="hidden">
+    <input id="messageInput"
+      class="flex-1 rounded-full px-5 py-3 focus:outline-none bg-white/60 placeholder-gray-400 text-sm shadow-inner border-0"
+      placeholder=" whisper something... 💫" />
+    <button onclick="sendMessage()"
+      class="bg-rose-400/80 hover:bg-rose-500 text-white px-6 py-3 rounded-full transition active:scale-95 shadow-lg font-medium backdrop-blur-sm">Send</button>
+  </div>
+</div>
 
-      // --- messages map for reactions ---
-      const messages = new Map();
+<script>
+  (function () {
+    // --- Configuration ---
+    const chatId = "shreya-himanshu";
+    const myUsername = "Shreya"; // change to "Himanshu" for other client
+    const otherUsername = "Himanshu";
 
-      // --- SOUND EFFECTS ---
-      const SOUND_URL = 'NOTIFY.mp3';
+    // --- WebSocket connection ---
+    const ws = new WebSocket(`wss://tgbackend-0u91.onrender.com/ws/${chatId}?username=${myUsername}`);
+    const backendBase = (() => {
+      const url = new URL(ws.url);
+      return `${url.protocol === 'ws:' ? 'http:' : 'https:'}//${url.host}`;
+    })();
+    console.log('✅ Backend base:', backendBase);
 
-      function playSound() {
-        try {
-          const audio = new Audio(SOUND_URL);
-          audio.volume = 0.6;
-          audio.play().catch(e => console.log('Audio play failed', e));
-        } catch (e) {
-          console.warn('Sound error', e);
-        }
+    // --- DOM elements ---
+    const chatBox = document.getElementById("chat");
+    const typingDiv = document.getElementById("typing");
+    const typingText = document.getElementById("typing-text");
+    const input = document.getElementById("messageInput");
+    const statusText = document.getElementById("status-text"); // not used but kept
+    const welcomeScreen = document.getElementById('welcomeScreen');
+    const heartsContainer = document.getElementById('hearts-container');
+
+    // --- messages map for reactions ---
+    const messages = new Map();
+
+    // --- SOUND EFFECTS ---
+    const SOUND_URL = 'NOTIFY.mp3';
+
+    function playSound() {
+      try {
+        const audio = new Audio(SOUND_URL);
+        audio.volume = 0.6;
+        audio.play().catch(e => console.log('Audio play failed', e));
+      } catch (e) {
+        console.warn('Sound error', e);
       }
+    }
 
-      // --- BACKGROUND FLOATING HEARTS (subtle) ---
-      function createBackgroundHeart() {
+    // --- BACKGROUND FLOATING HEARTS (subtle) ---
+    function createBackgroundHeart() {
+      const heart = document.createElement('div');
+      heart.className = 'heart-float';
+      const symbols = ['❤️', '💧', '🌸', '✨', '🕊️', '🌙'];
+      heart.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
+      heart.style.left = Math.random() * 100 + '%';
+      heart.style.animationDuration = (8 + Math.random() * 8) + 's';
+      heart.style.fontSize = (12 + Math.random() * 20) + 'px';
+      heart.style.opacity = 0.15 + Math.random() * 0.25;
+      heartsContainer.appendChild(heart);
+      setTimeout(() => heart.remove(), 11000);
+    }
+    setInterval(createBackgroundHeart, 600);
+
+    // --- ✨ SPECIAL LOVE HEARTS (triggered by keywords) – now fully opaque and crisp ---
+    function triggerLoveHearts(count = 7) {
+      const loveSymbols = [
+        '❤️', '💖', '💕', '💗', '💓', '💘', '💝', '💞', '❣️',
+        '🌸', '🌹', '🌺', '🌷', '💐', '🌼',
+        '✨', '💫', '🌟', '🌙', '☁️',
+        '🥰', '😍', '😘', '😻', '😇'
+      ];
+      for (let i = 0; i < count; i++) {
         const heart = document.createElement('div');
-        heart.className = 'heart-float';
-        const symbols = ['❤️', '💧', '🌸', '✨', '🕊️', '🌙'];
-        heart.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
+        heart.className = 'love-heart-float';
+        heart.innerHTML = loveSymbols[Math.floor(Math.random() * loveSymbols.length)];
         heart.style.left = Math.random() * 100 + '%';
-        heart.style.animationDuration = (8 + Math.random() * 8) + 's';
-        heart.style.fontSize = (12 + Math.random() * 20) + 'px';
-        heart.style.opacity = 0.15 + Math.random() * 0.25;
+        // bigger size range: 30px to 70px
+        const fontSize = 30 + Math.floor(Math.random() * 40);
+        heart.style.fontSize = fontSize + 'px';
+        // slight random rotation for organic feel
+        heart.style.transform = `rotate(${Math.random() * 40 - 20}deg)`;
+        // FULL OPAQUE – no transparency
+        heart.style.opacity = 1;
+        // duration between 4s and 9s (smooth but not too fast)
+        const duration = 4 + Math.random() * 6;
+        heart.style.animationDuration = duration + 's';
         heartsContainer.appendChild(heart);
-        setTimeout(() => heart.remove(), 11000);
+        setTimeout(() => {
+          if (heart.parentNode) heart.remove();
+        }, duration * 1000 + 300);
       }
-      setInterval(createBackgroundHeart, 600);
+    }
 
-      // --- ✨ SPECIAL LOVE HEARTS (triggered by keywords) – now fully opaque and crisp ---
-      function triggerLoveHearts(count = 7) {
-        const loveSymbols = [
-          '❤️', '💖', '💕', '💗', '💓', '💘', '💝', '💞', '❣️',
-          '🌸', '🌹', '🌺', '🌷', '💐', '🌼',
-          '✨', '💫', '🌟', '🌙', '☁️',
-          '🥰', '😍', '😘', '😻', '😇'
-        ];
-        for (let i = 0; i < count; i++) {
-          const heart = document.createElement('div');
-          heart.className = 'love-heart-float';
-          heart.innerHTML = loveSymbols[Math.floor(Math.random() * loveSymbols.length)];
-          heart.style.left = Math.random() * 100 + '%';
-          // bigger size range: 30px to 70px
-          const fontSize = 30 + Math.floor(Math.random() * 40);
-          heart.style.fontSize = fontSize + 'px';
-          // slight random rotation for organic feel
-          heart.style.transform = `rotate(${Math.random() * 40 - 20}deg)`;
-          // FULL OPAQUE – no transparency
-          heart.style.opacity = 1;
-          // duration between 4s and 9s (smooth but not too fast)
-          const duration = 4 + Math.random() * 6;
-          heart.style.animationDuration = duration + 's';
-          heartsContainer.appendChild(heart);
-          setTimeout(() => {
-            if (heart.parentNode) heart.remove();
-          }, duration * 1000 + 300);
-        }
+    // --- Check message for love keywords and trigger hearts ---
+    function checkForLoveWords(data) {
+      if (data.type !== 'message' || !data.text) return;
+      const text = data.text.toLowerCase();
+      const triggerWords = ['love', 'shreya', 'shreyu', 'himanshu', '❤️', '💖', '💕', '😍', '🥰', 'miss', 'baby',
+        'babu', 'sweet'
+      ];
+      let matchCount = 0;
+      triggerWords.forEach(word => {
+        if (text.includes(word.toLowerCase())) matchCount++;
+      });
+      if (matchCount > 0) {
+        // base 5 hearts + 2 per extra word, max 15
+        let heartCount = Math.min(5 + matchCount * 2, 15);
+        triggerLoveHearts(heartCount);
       }
+    }
 
-      // --- Check message for love keywords and trigger hearts ---
-      function checkForLoveWords(data) {
-        if (data.type !== 'message' || !data.text) return;
-        const text = data.text.toLowerCase();
-        const triggerWords = ['love', 'shreya', 'shreyu', 'himanshu', '❤️', '💖', '💕', '😍', '🥰', 'miss', 'baby',
-          'babu', 'sweet'
-        ];
-        let matchCount = 0;
-        triggerWords.forEach(word => {
-          if (text.includes(word.toLowerCase())) matchCount++;
-        });
-        if (matchCount > 0) {
-          // base 5 hearts + 2 per extra word, max 15
-          let heartCount = Math.min(5 + matchCount * 2, 15);
-          triggerLoveHearts(heartCount);
-        }
+    // --- WELCOME SCREEN FADE OUT ---
+    setTimeout(() => {
+      if (welcomeScreen) {
+        welcomeScreen.style.opacity = '0';
+        setTimeout(() => {
+          welcomeScreen.style.display = 'none';
+        }, 1000);
       }
+    }, 3000);
 
-      // --- WELCOME SCREEN FADE OUT ---
-      setTimeout(() => {
-        if (welcomeScreen) {
-          welcomeScreen.style.opacity = '0';
-          setTimeout(() => {
-            welcomeScreen.style.display = 'none';
-          }, 1000);
-        }
-      }, 3000);
-
-      // --- BIRTHDAY COUNTDOWN (18 June) ---
-      function updateBirthdayCountdown() {
-        const now = new Date();
-        const currentYear = now.getFullYear();
-        let birthday = new Date(currentYear, 5, 18, 0, 0, 0);
-        if (now > birthday) {
-          birthday = new Date(currentYear + 1, 5, 18, 0, 0, 0);
-        }
-        const diffMs = birthday - now;
-        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-        const diffHrs = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-        const diffSecs = Math.floor((diffMs % (1000 * 60)) / 1000);
-
-        let countdownStr = '';
-        if (diffDays === 0 && diffHrs === 0 && diffMins === 0 && diffSecs === 0) {
-          countdownStr = '🎉 TODAY IS THE DAY! 🎉';
-        } else {
-          countdownStr = `${diffDays}d ${diffHrs}h ${diffMins}m ${diffSecs}s`;
-        }
-        document.getElementById('countdown-timer').innerText = countdownStr;
+    // --- BIRTHDAY COUNTDOWN (18 June) ---
+    function updateBirthdayCountdown() {
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      let birthday = new Date(currentYear, 5, 18, 0, 0, 0);
+      if (now > birthday) {
+        birthday = new Date(currentYear + 1, 5, 18, 0, 0, 0);
       }
-      updateBirthdayCountdown();
-      setInterval(updateBirthdayCountdown, 1000);
+      const diffMs = birthday - now;
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      const diffHrs = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+      const diffSecs = Math.floor((diffMs % (1000 * 60)) / 1000);
 
-      // --- DOWNLOAD IMAGE FUNCTION ---
-      window.downloadImage = async function (imageUrl) {
-        try {
-          const link = document.createElement('a');
-          link.style.display = 'none';
-          document.body.appendChild(link);
-          const response = await fetch(imageUrl);
-          const blob = await response.blob();
-          const url = URL.createObjectURL(blob);
-          link.href = url;
-          link.download = 'shreya-himanshu-image.jpg';
-          link.click();
-          setTimeout(() => {
-            URL.revokeObjectURL(url);
-            document.body.removeChild(link);
-          }, 100);
-        } catch (err) {
-          console.error('Download failed, opening in new tab:', err);
-          window.open(imageUrl, '_blank');
-        }
-      };
+      let countdownStr = '';
+      if (diffDays === 0 && diffHrs === 0 && diffMins === 0 && diffSecs === 0) {
+        countdownStr = '🎉 TODAY IS THE DAY! 🎉';
+      } else {
+        countdownStr = `${diffDays}d ${diffHrs}h ${diffMins}m ${diffSecs}s`;
+      }
+      document.getElementById('countdown-timer').innerText = countdownStr;
+    }
+    updateBirthdayCountdown();
+    setInterval(updateBirthdayCountdown, 1000);
 
-      // --- ADD MESSAGE (with love heart trigger) ---
-      function addMessage(data, isOther) {
-        const messageDiv = document.createElement("div");
-        messageDiv.className = `message-wrapper relative ${isOther ? 'text-left' : 'text-right'} message-animation`;
-        messageDiv.dataset.id = data.id;
+    // --- DOWNLOAD IMAGE FUNCTION ---
+    window.downloadImage = async function (imageUrl) {
+      try {
+        const link = document.createElement('a');
+        link.style.display = 'none';
+        document.body.appendChild(link);
+        const response = await fetch(imageUrl);
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        link.href = url;
+        link.download = 'shreya-himanshu-image.jpg';
+        link.click();
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+          document.body.removeChild(link);
+        }, 100);
+      } catch (err) {
+        console.error('Download failed, opening in new tab:', err);
+        window.open(imageUrl, '_blank');
+      }
+    };
 
-        let content = '';
-        if (data.type === 'image') {
-          const imageUrl = data.url.startsWith('/') ? backendBase + data.url : data.url;
-          const escapedUrl = imageUrl.replace(/'/g, "\\'");
-          content = `<div class="relative inline-block max-w-xs rounded-3xl shadow-md overflow-hidden bg-white/30 backdrop-blur-sm border border-white/40">
+    // --- ADD MESSAGE (with love heart trigger) ---
+    function addMessage(data, isOther) {
+      const messageDiv = document.createElement("div");
+      messageDiv.className = `message-wrapper relative ${isOther ? 'text-left' : 'text-right'} message-animation`;
+      messageDiv.dataset.id = data.id;
+
+      let content = '';
+      if (data.type === 'image') {
+        const imageUrl = data.url.startsWith('/') ? backendBase + data.url : data.url;
+        const escapedUrl = imageUrl.replace(/'/g, "\\'");
+        content = `<div class="relative inline-block max-w-xs rounded-3xl shadow-md overflow-hidden bg-white/30 backdrop-blur-sm border border-white/40">
             <img src="${imageUrl}" class="w-full h-auto img-load" 
                  onload="this.classList.remove('img-load'); this.classList.add('img-loaded');" 
                  onerror="this.onerror=null; this.src='https://via.placeholder.com/200?text=Image+failed';" />
@@ -517,20 +516,20 @@
               </svg>
             </button>
           </div>`;
-        } else {
-          const bubbleClass = isOther ? 'bubble-left' : 'bubble-right';
-          content =
-            `<div class="${bubbleClass} inline-block px-5 py-3 max-w-xs shadow-lg backdrop-blur-sm">${data.text}</div>`;
-        }
+      } else {
+        const bubbleClass = isOther ? 'bubble-left' : 'bubble-right';
+        content =
+          `<div class="${bubbleClass} inline-block px-5 py-3 max-w-xs shadow-lg backdrop-blur-sm">${data.text}</div>`;
+      }
 
-        const now = new Date();
-        const timestamp = now.toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit'
-        });
-        const receipt = !isOther ? '<span class="text-xs ml-1.5 text-white/70">✓✓</span>' : '';
+      const now = new Date();
+      const timestamp = now.toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      const receipt = !isOther ? '<span class="text-xs ml-1.5 text-white/70">✓✓</span>' : '';
 
-        const reactionPicker = `
+      const reactionPicker = `
         <div class="reaction-picker absolute bottom-0 ${isOther ? 'left-0' : 'right-0'} -translate-y-2 bg-white/70 backdrop-blur-sm rounded-full px-1.5 py-0.5 gap-1 text-lg z-10 shadow-md">
           <button onclick="sendReaction('${data.id}', '❤️')" class="reaction-btn hover:scale-125 transition">❤️</button>
           <button onclick="sendReaction('${data.id}', '🥺')" class="reaction-btn hover:scale-125 transition">🥺</button>
@@ -538,172 +537,172 @@
           <button onclick="sendReaction('${data.id}', '🕊️')" class="reaction-btn hover:scale-125 transition">🕊️</button>
         </div>`;
 
-        messageDiv.innerHTML =
-          `${content}<div class="text-xs text-gray-400 mt-1 flex items-center justify-end gap-1"><span>${timestamp}</span>${receipt}</div>${reactionPicker}`;
-        chatBox.appendChild(messageDiv);
-        chatBox.scrollTo({
-          top: chatBox.scrollHeight,
-          behavior: 'smooth'
-        });
-        messages.set(data.id, messageDiv);
+      messageDiv.innerHTML =
+        `${content}<div class="text-xs text-gray-400 mt-1 flex items-center justify-end gap-1"><span>${timestamp}</span>${receipt}</div>${reactionPicker}`;
+      chatBox.appendChild(messageDiv);
+      chatBox.scrollTo({
+        top: chatBox.scrollHeight,
+        behavior: 'smooth'
+      });
+      messages.set(data.id, messageDiv);
 
-        // ✨ TRIGGER LOVE HEARTS if message contains keywords
-        checkForLoveWords(data);
+      // ✨ TRIGGER LOVE HEARTS if message contains keywords
+      checkForLoveWords(data);
+    }
+
+    // --- WebSocket message handler ---
+    ws.onmessage = function (event) {
+      const data = JSON.parse(event.data);
+      console.log("📩 Received:", data);
+
+      switch (data.type) {
+        case "message":
+          addMessage(data, data.sender !== myUsername);
+          if (data.sender !== myUsername) playSound();
+          setTimeout(() => {
+            ws.send(JSON.stringify({
+              type: "read",
+              messageId: data.id
+            }));
+          }, 1000);
+          break;
+        case "typing":
+          const phrases = ["Himanshu is thinking of you", "Himanshu is smiling", "Your prince writes...",
+            "Himanshu sends a whisper", "Himanshu is dreaming"
+          ];
+          typingText.innerText = phrases[Math.floor(Math.random() * phrases.length)];
+          typingDiv.classList.remove("hidden");
+          setTimeout(() => typingDiv.classList.add("hidden"), 2500);
+          break;
+        case "reaction":
+          applyReaction(data.messageId, data.emoji);
+          break;
+        case "read":
+          markAsRead(data.messageId);
+          break;
+        case "status":
+          updateStatus(data.user, data.status, data.last_seen);
+          break;
+        case "image":
+          addMessage(data, data.sender !== myUsername);
+          if (data.sender !== myUsername) playSound();
+          break;
+        default:
+          break;
       }
+    };
 
-      // --- WebSocket message handler ---
-      ws.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        console.log("📩 Received:", data);
+    // --- send message ---
+    window.sendMessage = function () {
+      const text = input.value.trim();
+      if (!text) return;
 
-        switch (data.type) {
-          case "message":
-            addMessage(data, data.sender !== myUsername);
-            if (data.sender !== myUsername) playSound();
-            setTimeout(() => {
-              ws.send(JSON.stringify({
-                type: "read",
-                messageId: data.id
-              }));
-            }, 1000);
-            break;
-          case "typing":
-            const phrases = ["Himanshu is thinking of you", "Himanshu is smiling", "Your prince writes...",
-              "Himanshu sends a whisper", "Himanshu is dreaming"
-            ];
-            typingText.innerText = phrases[Math.floor(Math.random() * phrases.length)];
-            typingDiv.classList.remove("hidden");
-            setTimeout(() => typingDiv.classList.add("hidden"), 2500);
-            break;
-          case "reaction":
-            applyReaction(data.messageId, data.emoji);
-            break;
-          case "read":
-            markAsRead(data.messageId);
-            break;
-          case "status":
-            updateStatus(data.user, data.status, data.last_seen);
-            break;
-          case "image":
-            addMessage(data, data.sender !== myUsername);
-            if (data.sender !== myUsername) playSound();
-            break;
-          default:
-            break;
-        }
+      const id = Date.now() + '-' + Math.random().toString(36);
+      const message = {
+        type: "message",
+        id: id,
+        text: text,
+        sender: myUsername
       };
+      addMessage(message, false);
+      ws.send(JSON.stringify(message));
+      playSound();
+      input.value = "";
+    };
 
-      // --- send message ---
-      window.sendMessage = function () {
-        const text = input.value.trim();
-        if (!text) return;
-
+    // --- image upload ---
+    document.getElementById('image-upload').addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
         const id = Date.now() + '-' + Math.random().toString(36);
         const message = {
-          type: "message",
+          type: "image",
           id: id,
-          text: text,
+          url: e.target.result,
           sender: myUsername
         };
         addMessage(message, false);
         ws.send(JSON.stringify(message));
         playSound();
-        input.value = "";
       };
+      reader.readAsDataURL(file);
+      this.value = '';
+    });
 
-      // --- image upload ---
-      document.getElementById('image-upload').addEventListener('change', function (e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const id = Date.now() + '-' + Math.random().toString(36);
-          const message = {
-            type: "image",
-            id: id,
-            url: e.target.result,
-            sender: myUsername
-          };
-          addMessage(message, false);
-          ws.send(JSON.stringify(message));
-          playSound();
-        };
-        reader.readAsDataURL(file);
-        this.value = '';
-      });
+    // --- reaction functions ---
+    window.sendReaction = function (messageId, emoji) {
+      ws.send(JSON.stringify({
+        type: "reaction",
+        messageId: messageId,
+        emoji: emoji
+      }));
+      applyReaction(messageId, emoji);
+    };
 
-      // --- reaction functions ---
-      window.sendReaction = function (messageId, emoji) {
-        ws.send(JSON.stringify({
-          type: "reaction",
-          messageId: messageId,
-          emoji: emoji
-        }));
-        applyReaction(messageId, emoji);
-      };
+    function applyReaction(messageId, emoji) {
+      const msgDiv = messages.get(messageId);
+      if (!msgDiv) return;
+      let reactionBadge = msgDiv.querySelector('.reaction-badge');
+      if (reactionBadge) reactionBadge.remove();
+      reactionBadge = document.createElement('div');
+      reactionBadge.className =
+        'reaction-badge absolute -bottom-2 -right-2 bg-white/70 backdrop-blur-sm rounded-full px-1.5 text-sm shadow-md z-20';
+      reactionBadge.textContent = emoji;
+      msgDiv.appendChild(reactionBadge);
+    }
 
-      function applyReaction(messageId, emoji) {
-        const msgDiv = messages.get(messageId);
-        if (!msgDiv) return;
-        let reactionBadge = msgDiv.querySelector('.reaction-badge');
-        if (reactionBadge) reactionBadge.remove();
-        reactionBadge = document.createElement('div');
-        reactionBadge.className =
-          'reaction-badge absolute -bottom-2 -right-2 bg-white/70 backdrop-blur-sm rounded-full px-1.5 text-sm shadow-md z-20';
-        reactionBadge.textContent = emoji;
-        msgDiv.appendChild(reactionBadge);
-      }
+    function markAsRead(messageId) {
+      const msgDiv = messages.get(messageId);
+      if (!msgDiv) return;
+      const receiptSpan = msgDiv.querySelector('.text-gray-400 span:last-child');
+      if (receiptSpan) receiptSpan.textContent = '✓✓';
+    }
 
-      function markAsRead(messageId) {
-        const msgDiv = messages.get(messageId);
-        if (!msgDiv) return;
-        const receiptSpan = msgDiv.querySelector('.text-gray-400 span:last-child');
-        if (receiptSpan) receiptSpan.textContent = '✓✓';
-      }
-
-      function updateStatus(user, status, lastSeen) {
-        if (user === otherUsername && statusText) {
-          if (status === 'online') {
-            statusText.innerHTML =
-              '<span class="inline-block w-1.5 h-1.5 bg-emerald-400 rounded-full"></span><span class="ml-1">online now</span>';
-          } else {
-            const last = lastSeen ? new Date(lastSeen).toLocaleTimeString([], {
-              hour: '2-digit',
-              minute: '2-digit'
-            }) : 'recently';
-            statusText.innerHTML =
-              '<span class="inline-block w-1.5 h-1.5 bg-gray-400 rounded-full"></span><span class="ml-1">last seen ' +
-              last + '</span>';
-          }
+    function updateStatus(user, status, lastSeen) {
+      if (user === otherUsername && statusText) {
+        if (status === 'online') {
+          statusText.innerHTML =
+            '<span class="inline-block w-1.5 h-1.5 bg-emerald-400 rounded-full"></span><span class="ml-1">online now</span>';
+        } else {
+          const last = lastSeen ? new Date(lastSeen).toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit'
+          }) : 'recently';
+          statusText.innerHTML =
+            '<span class="inline-block w-1.5 h-1.5 bg-gray-400 rounded-full"></span><span class="ml-1">last seen ' +
+            last + '</span>';
         }
       }
+    }
 
-      // --- typing indicator ---
-      input.addEventListener("input", () => {
-        ws.send(JSON.stringify({
-          type: "typing"
-        }));
-      });
-      input.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") sendMessage();
-      });
+    // --- typing indicator ---
+    input.addEventListener("input", () => {
+      ws.send(JSON.stringify({
+        type: "typing"
+      }));
+    });
+    input.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") sendMessage();
+    });
 
-      // --- theme switcher ---
-      window.setTheme = function (theme) {
-        const body = document.body;
-        if (theme === 'pink') {
-          body.style.background = 'linear-gradient(145deg, #fce7f3, #fbcfe8, #f5d0fe, #e9d5ff)';
-        } else if (theme === 'midnight') {
-          body.style.background = 'linear-gradient(145deg, #1e1b4b, #2e1a4a, #2d1f4b, #1f1a4b)';
-        } else if (theme === 'pastel') {
-          body.style.background = 'linear-gradient(145deg, #d9b4fe, #bae6fd, #fbcfe8, #fef9c3)';
-        }
-      };
+    // --- theme switcher ---
+    window.setTheme = function (theme) {
+      const body = document.body;
+      if (theme === 'pink') {
+        body.style.background = 'linear-gradient(145deg, #fce7f3, #fbcfe8, #f5d0fe, #e9d5ff)';
+      } else if (theme === 'midnight') {
+        body.style.background = 'linear-gradient(145deg, #1e1b4b, #2e1a4a, #2d1f4b, #1f1a4b)';
+      } else if (theme === 'pastel') {
+        body.style.background = 'linear-gradient(145deg, #d9b4fe, #bae6fd, #fbcfe8, #fef9c3)';
+      }
+    };
 
-      ws.onopen = () => console.log("💫 Connected");
-      ws.onerror = (err) => console.error("❌ WebSocket error", err);
-    })();
-  </script>
+    ws.onopen = () => console.log("💫 Connected");
+    ws.onerror = (err) => console.error("❌ WebSocket error", err);
+  })();
+</script>
 </body>
 
 </html>
