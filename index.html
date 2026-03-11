@@ -1,710 +1,781 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <!-- Mobile‑first viewport: dynamic viewport units, safe areas, no scaling -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
   <title>Private · Shreya & Himanshu ✨</title>
 
-  <!-- Tailwind for utility -->
+  <!-- Tailwind for utility (lightweight) -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- Google Fonts -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Poppins:wght@400;500&display=swap"
-    rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+  <!-- Google Fonts – same romantic typography -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
+    /* ----- RESET & GLOBAL ----- */
     * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
       font-family: 'Poppins', sans-serif;
     }
 
-    /* ===== Smooth animations for welcome screen ===== */
-    @keyframes fadeIn {
-      0% {
-        opacity: 0;
-        transform: translateY(-30px);
-      }
-
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    body {
+      height: 100dvh;               /* dynamic viewport – respects keyboard on mobile */
+      overflow: hidden;
+      background: linear-gradient(145deg, #fce7f3, #fbcfe8, #f5d0fe, #e9d5ff); /* default pink gradient */
+      display: flex;
+      flex-direction: column;
     }
 
-    @keyframes fadeUp {
-      0% {
-        opacity: 0;
-        transform: translateY(40px);
-      }
-
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    /* ----- MAIN CHAT CONTAINER (full flex, no overflow) ----- */
+    #chatApp {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      max-width: 48rem;              /* comfortable on tablet/desktop */
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(24px);
+      border-left: 1px solid rgba(255, 255, 255, 0.3);
+      border-right: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 30px 60px -10px rgba(0, 0, 0, 0.2);
+      height: 100%;                  /* take full body height */
     }
 
-    .animate-fadeIn {
-      animation: fadeIn 1.2s ease forwards;
+    /* ----- CHAT MESSAGE LIST (smooth scroll + touch) ----- */
+    #chat {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      /* scrollbar – same romantic pink */
+      scrollbar-width: thin;
+      scrollbar-color: #ec4899 rgba(255, 255, 240, 0.1);
     }
-
-    .animate-fadeUp {
-      animation: fadeUp 1.6s ease forwards;
-    }
-
-    /* ===== Chat message animation ===== */
-    .message-animation {
-      animation: fadeUp 0.3s ease;
-    }
-
-    /* ===== Custom scrollbar + SMOOTH SCROLL ===== */
     #chat::-webkit-scrollbar {
       width: 6px;
     }
-
     #chat::-webkit-scrollbar-track {
       background: rgba(255, 255, 240, 0.1);
       border-radius: 10px;
     }
-
     #chat::-webkit-scrollbar-thumb {
       background: #ec4899;
       border-radius: 10px;
     }
 
-    #chat {
-      scroll-behavior: smooth;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    /* ===== Reaction picker (hover) ===== */
-    .reaction-picker {
-      display: none;
-    }
-
-    .message-wrapper:hover .reaction-picker {
-      display: flex;
-    }
-
-    /* ===== Chat bubbles – refined ===== */
+    /* ----- MESSAGE BUBBLES – production‑ready ----- */
     .bubble-left {
       background: rgba(255, 255, 255, 0.7);
       backdrop-filter: blur(8px);
       color: #1f1a2e;
       border-radius: 24px 24px 24px 8px;
       box-shadow: 0 6px 14px rgba(0, 0, 0, 0.02);
+      max-width: 85%;                /* respect small screens */
+      word-wrap: break-word;
+      padding: 0.75rem 1.25rem;
     }
-
     .bubble-right {
       background: rgba(230, 120, 160, 0.8);
       backdrop-filter: blur(8px);
       color: white;
       border-radius: 24px 24px 8px 24px;
       box-shadow: 0 6px 14px rgba(180, 70, 120, 0.15);
+      max-width: 85%;
+      word-wrap: break-word;
+      padding: 0.75rem 1.25rem;
     }
 
-    /* ===== Online pulse ===== */
-    .status-pulse {
-      box-shadow: 0 0 0 0 rgba(230, 120, 160, 0.5);
-      animation: pulse-soft 2s infinite;
+    /* ----- IMAGE MESSAGE CONTAINER (never overflow) ----- */
+    .image-bubble {
+      max-width: 85%;
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      position: relative;
     }
-
-    @keyframes pulse-soft {
-      70% {
-        box-shadow: 0 0 0 10px rgba(230, 120, 160, 0);
-      }
+    .image-bubble img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+      max-height: 60vh;              /* prevent overly tall images */
+      transition: filter 0.2s;
     }
-
-    /* ===== Image loading blur ===== */
     .img-load {
       filter: blur(12px);
-      transition: filter 0.3s;
     }
-
     .img-loaded {
       filter: blur(0);
     }
 
-    /* ===== Floating hearts background (existing, subtle) ===== */
-    .heart-float {
+    /* ----- DOWNLOAD BUTTON (always on top, safe tap area) ----- */
+    .download-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: 9999px;
+      padding: 0.6rem;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
+      z-index: 10;
+      line-height: 0;                /* remove extra space */
+      pointer-events: auto;
+    }
+    .download-btn:hover {
+      background: white;
+      transform: scale(1.1);
+    }
+    .download-btn svg {
+      width: 1.2rem;
+      height: 1.2rem;
+      stroke: #ec4899;
+      stroke-width: 2;
+    }
+    /* touch target size ≥ 44px */
+    .download-btn {
+      min-width: 44px;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ----- REACTION PICKER (hover on desktop, always visible on touch via media) ----- */
+    .reaction-picker {
+      display: none;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(8px);
+      border-radius: 9999px;
+      padding: 0.2rem 0.5rem;
+      gap: 0.4rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .message-wrapper:hover .reaction-picker {
+      display: flex;
+    }
+    /* for touch devices we show it always (simpler than long‑press) – keeps functionality */
+    @media (hover: none) and (pointer: coarse) {
+      .reaction-picker {
+        display: flex;
+        position: relative;
+        margin-top: 4px;
+        justify-content: flex-end;
+        background: transparent;
+        backdrop-filter: none;
+        box-shadow: none;
+      }
+    }
+    .reaction-btn {
+      font-size: 1.4rem;
+      transition: transform 0.1s;
+      min-width: 44px;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .reaction-btn:hover {
+      transform: scale(1.2);
+    }
+
+    /* ----- INPUT AREA (sticky, safe‑area, responsive) ----- */
+    .input-container {
+      padding: 0.75rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(16px);
+      display: flex;
+      flex-wrap: wrap;               /* wraps on very small screens */
+      gap: 0.5rem;
+      align-items: center;
+      padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0.75rem));
+    }
+    .input-container label {
+      cursor: pointer;
+      color: #f472b6;
+      transition: color 0.2s;
+      min-width: 44px;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 9999px;
+    }
+    .input-container label:hover {
+      color: #ec4899;
+      background: rgba(255, 255, 255, 0.2);
+    }
+    #messageInput {
+      flex: 1 1 180px;               /* grow, shrink, base width */
+      min-width: 140px;
+      border-radius: 9999px;
+      padding: 0.75rem 1.2rem;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(4px);
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      line-height: 1.4;
+      transition: background 0.2s;
+    }
+    #messageInput:focus {
+      background: rgba(255, 255, 255, 0.9);
+    }
+    .send-btn {
+      flex-shrink: 0;
+      background: rgba(244, 114, 182, 0.8);
+      backdrop-filter: blur(4px);
+      color: white;
+      border: none;
+      border-radius: 9999px;
+      padding: 0.75rem 1.5rem;
+      font-weight: 500;
+      font-size: 1rem;
+      min-width: 70px;
+      min-height: 44px;
+      transition: background 0.2s, transform 0.1s;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(236, 72, 153, 0.2);
+    }
+    .send-btn:active {
+      transform: scale(0.96);
+      background: #ec4899;
+    }
+    @media (max-width: 380px) {
+      .send-btn {
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+      }
+    }
+
+    /* ----- FLOATING HEARTS (optimised) ----- */
+    #hearts-container {
       position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 9999;
+    }
+    .heart-float {
+      position: absolute;
       bottom: -40px;
       color: rgba(255, 210, 230, 0.4);
+      animation: floatUp linear forwards;
       pointer-events: none;
-      animation-name: floatUp;
-      animation-timing-function: linear;
-      animation-fill-mode: forwards;
-      z-index: 1;
+      will-change: transform, opacity;
     }
-
-    @keyframes floatUp {
-      0% {
-        transform: translateY(0) rotate(0deg);
-        opacity: 0;
-      }
-
-      10% {
-        opacity: 0.5;
-      }
-
-      100% {
-        transform: translateY(-120vh) rotate(25deg);
-        opacity: 0;
-      }
-    }
-
-    /* ===== SPECIAL LOVE HEARTS (bigger, brighter, fully opaque) ===== */
     .love-heart-float {
-      position: fixed;
+      position: absolute;
       bottom: -40px;
       pointer-events: none;
-      animation-name: floatUp;
-      animation-timing-function: ease-out;
-      animation-fill-mode: forwards;
+      animation: floatUp ease-out forwards;
       z-index: 9999;
-      /* UI ke upar aayega */
       color: #ff1493;
-      /* deep pink – solid & vibrant */
       filter: drop-shadow(0 0 12px #ffb6c1);
-      /* soft glow, no blur on the heart itself */
       text-shadow: 0 0 8px #fff8, 0 0 16px #ff99cc;
-      /* extra sparkle, still sharp */
-      will-change: transform, opacity;
       opacity: 1 !important;
-      /* fully opaque */
       font-weight: 500;
-      /* keep it crisp */
+      will-change: transform, opacity;
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.8; }
+      100% { transform: translateY(-120vh) rotate(25deg); opacity: 0; }
     }
 
-    /* ===== Typing dots ===== */
+    /* ----- WELCOME SCREEN (same elegance) ----- */
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(-30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeUp {
+      0% { opacity: 0; transform: translateY(40px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeIn { animation: fadeIn 1.2s ease forwards; }
+    .animate-fadeUp { animation: fadeUp 1.6s ease forwards; }
+
+    /* ----- TYPING DOTS ----- */
     .typing-dots::after {
       content: '...';
       animation: dots 1.5s steps(4, end) infinite;
       display: inline-block;
       width: 20px;
     }
+    @keyframes dots { 0%,20% { content: ''; } 40% { content: '.'; } 60% { content: '..'; } 80%,100% { content: '...'; } }
 
-    @keyframes dots {
-
-      0%,
-      20% {
-        content: '';
-      }
-
-      40% {
-        content: '.';
-      }
-
-      60% {
-        content: '..';
-      }
-
-      80%,
-      100% {
-        content: '...';
-      }
-    }
-
-    /* ===== Birthday countdown shimmer ===== */
-    @keyframes shimmer {
-      0% {
-        background-position: -200% 0;
-      }
-
-      100% {
-        background-position: 200% 0;
-      }
-    }
-
+    /* ----- BIRTHDAY SHIMMER (unchanged) ----- */
     .birthday-shimmer {
       background: linear-gradient(90deg, #fbcfe8, #f9a8d4, #f472b6, #f9a8d4, #fbcfe8);
       background-size: 400% 100%;
       animation: shimmer 8s infinite linear;
     }
+    @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
 
-    /* ===== Professional download button style ===== */
-    .download-btn {
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(4px);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
+    /* ----- STATUS PULSE ----- */
+    .status-pulse { box-shadow: 0 0 0 0 rgba(230, 120, 160, 0.5); animation: pulse-soft 2s infinite; }
+    @keyframes pulse-soft { 70% { box-shadow: 0 0 0 10px rgba(230, 120, 160, 0); } }
 
-    .download-btn:hover {
-      background: rgba(255, 255, 255, 1);
-      transform: scale(1.1);
-      box-shadow: 0 8px 16px rgba(236, 72, 153, 0.3);
-    }
-
-    .download-btn svg {
-      transition: transform 0.2s;
-    }
-
-    .download-btn:hover svg {
-      transform: translateY(2px);
-    }
+    /* ----- MESSAGE ANIMATION ----- */
+    .message-animation { animation: fadeUp 0.3s ease; }
   </style>
 </head>
+<body>
 
-<body class="min-h-[100dvh] w-full overflow-hidden relative"></body>
+  <!-- Floating hearts container (background + love hearts) -->
+  <div id="hearts-container"></div>
 
-<!-- Container for floating hearts (background + love hearts) -->
-<div id="hearts-container" class="fixed inset-0 overflow-hidden pointer-events-none" style="z-index:9999;"></div>
-
-<!-- ========== WELCOME SCREEN ========== -->
-<div id="welcomeScreen"
-  class="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-[#1e1035] via-[#150d25] to-[#0b0618] z-50 transition-opacity duration-1000">
-  <div class="text-center px-6 max-w-md">
-    <h1 class="text-4xl md:text-5xl font-bold text-pink-400 mb-6 animate-fadeIn">Welcome Shreya 💖</h1>
-    <p class="text-gray-300 text-lg leading-relaxed animate-fadeUp">
-      This private space is only for you, Shreya.<br>
-      Every message carries my heartbeat,<br>
-      every second feels closer to you,<br>
-      and every word here is meant to make you smile.
-    </p>
-    <div class="mt-10">
-      <div class="w-14 h-14 border-4 border-pink-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ========== MAIN CHAT ========== -->
-<div id="chatApp" class="w-full min-h-[100dvh] max-w-3xl mx-auto flex flex-col relative"
-  style="background: rgba(255,255,255,0.15); backdrop-filter: blur(24px); border-left:1px solid rgba(255,255,255,0.3); border-right:1px solid rgba(255,255,255,0.3); box-shadow:0 30px 60px -10px rgba(0,0,0,0.2);">
-
-  <!-- HEADER -->
-  <div class="px-4 py-3 flex items-center justify-between border-b border-white/30">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full overflow-hidden ring-2 ring-white/60">
-        <img src="https://images.unsplash.com/photo-1529636798458-92182e662485" class="w-full h-full object-cover"
-          alt="couple">
-      </div>
-      <div class="flex flex-col leading-tight">
-        <span class="text-sm sm:text-base md:text-lg text-gray-800"
-          style="font-family:'Playfair Display', serif;">Shreya</span>
-        <span class="text-xs sm:text-sm text-pink-500" style="font-family:'Poppins', sans-serif;">Himanshu</span>
+  <!-- WELCOME SCREEN (fades out after 3s) -->
+  <div id="welcomeScreen" class="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-[#1e1035] via-[#150d25] to-[#0b0618] z-50 transition-opacity duration-1000">
+    <div class="text-center px-6 max-w-md">
+      <h1 class="text-4xl md:text-5xl font-bold text-pink-400 mb-6 animate-fadeIn">Welcome Shreya 💖</h1>
+      <p class="text-gray-300 text-lg leading-relaxed animate-fadeUp">
+        This private space is only for you, Shreya.<br>
+        Every message carries my heartbeat,<br>
+        every second feels closer to you,<br>
+        and every word here is meant to make you smile.
+      </p>
+      <div class="mt-10">
+        <div class="w-14 h-14 border-4 border-pink-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
       </div>
     </div>
-    <div class="flex gap-1.5">
-      <button onclick="setTheme('pink')"
-        class="w-7 h-7 rounded-full bg-rose-200 border border-white shadow-md hover:scale-110 transition"></button>
-      <button onclick="setTheme('midnight')"
-        class="w-7 h-7 rounded-full bg-indigo-800 border border-white shadow-md hover:scale-110 transition"></button>
-      <button onclick="setTheme('pastel')"
-        class="w-7 h-7 rounded-full bg-purple-200 border border-white shadow-md hover:scale-110 transition"></button>
+  </div>
+
+  <!-- MAIN CHAT APP -->
+  <div id="chatApp">
+    <!-- HEADER (sticky) -->
+    <div class="px-4 py-3 flex items-center justify-between border-b border-white/30 bg-white/20 backdrop-blur-md">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 rounded-full overflow-hidden ring-2 ring-white/60">
+          <img src="https://images.unsplash.com/photo-1529636798458-92182e662485" class="w-full h-full object-cover" alt="couple">
+        </div>
+        <div class="flex flex-col leading-tight">
+          <span class="text-sm sm:text-base md:text-lg text-gray-800" style="font-family:'Playfair Display', serif;">Shreya</span>
+          <span class="text-xs sm:text-sm text-pink-500">Himanshu</span>
+        </div>
+      </div>
+      <div class="flex gap-1.5">
+        <button onclick="setTheme('pink')" class="w-8 h-8 rounded-full bg-rose-200 border border-white shadow-md hover:scale-110 transition" aria-label="Pink theme"></button>
+        <button onclick="setTheme('midnight')" class="w-8 h-8 rounded-full bg-indigo-800 border border-white shadow-md hover:scale-110 transition" aria-label="Midnight theme"></button>
+        <button onclick="setTheme('pastel')" class="w-8 h-8 rounded-full bg-purple-200 border border-white shadow-md hover:scale-110 transition" aria-label="Pastel theme"></button>
+      </div>
+    </div>
+
+    <!-- BIRTHDAY COUNTDOWN BANNER -->
+    <div id="birthday-banner" class="px-3 py-2 text-center bg-gradient-to-r from-pink-200 via-purple-200 to-pink-200 text-gray-800 font-medium text-sm md:text-base relative overflow-hidden border-b border-white/30 birthday-shimmer">
+      <span id="countdown-timer">🎂 loading...</span> until Shreya's Birthday 🎉🎈
+      <div class="absolute inset-0 pointer-events-none text-white/20 text-2xl flex justify-between px-2 items-center">
+        <span>🎂</span><span>🎈</span><span>🎁</span><span>✨</span><span>🌸</span>
+      </div>
+    </div>
+
+    <!-- CHAT MESSAGES (flexible) -->
+    <div id="chat" class="flex-1 overflow-y-auto p-4 space-y-3" role="log" aria-live="polite" aria-label="Chat messages"></div>
+
+    <!-- TYPING INDICATOR -->
+    <div id="typing" class="px-5 py-1.5 text-sm text-rose-600 hidden items-center gap-1.5 italic" style="font-family:'Playfair Display';">
+      <span id="typing-text">Himanshu is writing</span>
+      <span class="typing-dots"></span>
+    </div>
+
+    <!-- INPUT AREA (sticky, safe‑area) -->
+    <div class="input-container">
+      <label for="image-upload" class="cursor-pointer" aria-label="Upload image">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+      </label>
+      <input id="image-upload" type="file" accept="image/*" class="hidden">
+      <input id="messageInput" type="text" placeholder="whisper something... 💫" autocomplete="off" enterkeyhint="send">
+      <button onclick="sendMessage()" class="send-btn" aria-label="Send message">Send</button>
     </div>
   </div>
 
-  <!-- BIRTHDAY COUNTDOWN BANNER -->
-  <div id="birthday-banner"
-    class="px-3 py-2 text-center bg-gradient-to-r from-pink-200 via-purple-200 to-pink-200 text-gray-800 font-medium text-sm md:text-base relative overflow-hidden border-b border-white/30 birthday-shimmer">
-    <span id="countdown-timer">🎂 loading...</span> until Shreya's Birthday 🎉🎈
-    <div class="absolute inset-0 pointer-events-none text-white/20 text-2xl flex justify-between px-2 items-center">
-      <span>🎂</span><span>🎈</span><span>🎁</span><span>✨</span><span>🌸</span>
-    </div>
-  </div>
+  <script>
+    (function() {
+      // --- Configuration (same as original) ---
+      const chatId = "shreya-himanshu";
+      const myUsername = "Shreya";    // change to "Himanshu" for other client
+      const otherUsername = "Himanshu";
 
-  <!-- CHAT MESSAGES -->
-  <div id="chat" class="flex-1 overflow-y-auto p-4 space-y-3 pb-24"></div>
+      // --- WebSocket connection ---
+      const ws = new WebSocket(`wss://tgbackend-0u91.onrender.com/ws/${chatId}?username=${myUsername}`);
+      const backendBase = (() => {
+        try {
+          const url = new URL(ws.url);
+          return `${url.protocol === 'ws:' ? 'http:' : 'https:'}//${url.host}`;
+        } catch {
+          return ''; // fallback
+        }
+      })();
 
-  <!-- TYPING INDICATOR -->
-  <div id="typing" class="px-5 py-1.5 text-sm text-rose-600 hidden items-center gap-1.5 italic"
-    style="font-family:'Playfair Display';">
-    <span id="typing-text">Himanshu is writing</span>
-    <span class="typing-dots"></span>
-  </div>
+      // --- DOM elements ---
+      const chatBox = document.getElementById("chat");
+      const typingDiv = document.getElementById("typing");
+      const typingText = document.getElementById("typing-text");
+      const input = document.getElementById("messageInput");
+      const welcomeScreen = document.getElementById('welcomeScreen');
+      const heartsContainer = document.getElementById('hearts-container');
 
-  <!-- INPUT AREA -->
-  <div class="p-3 border-t border-white/30 flex gap-2 items-center sticky bottom-0">
-    <label for="image-upload"
-      class="cursor-pointer text-rose-400 hover:text-rose-500 transition p-2.5 rounded-full hover:bg-white/20">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-        stroke-width="1.7">
-        <path stroke-linecap="round" stroke-linejoin="round"
-          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-      </svg>
-    </label>
-    <input id="image-upload" type="file" accept="image/*" class="hidden">
-    <input id="messageInput"
-      class="flex-grow min-w-0 rounded-full px-4 py-3 focus:outline-none bg-white/60 placeholder-gray-400 text-sm shadow-inner border-0"
-      placeholder=" whisper something... 💫" />
-    <button onclick="sendMessage()"
-class="flex-shrink-0 bg-rose-400/80 hover:bg-rose-500 text-white px-4 py-2.5 rounded-full transition active:scale-95 shadow-lg font-medium">
-Send
-</button>
-  </div>
-</div>
+      // --- Messages map for reactions ---
+      const messages = new Map();
 
-<script>
-  (function () {
-    // --- Configuration ---
-    const chatId = "shreya-himanshu";
-    const myUsername = "Shreya"; // change to "Himanshu" for other client
-    const otherUsername = "Himanshu";
-
-    // --- WebSocket connection ---
-    const ws = new WebSocket(`wss://tgbackend-0u91.onrender.com/ws/${chatId}?username=${myUsername}`);
-    const backendBase = (() => {
-      const url = new URL(ws.url);
-      return `${url.protocol === 'ws:' ? 'http:' : 'https:'}//${url.host}`;
-    })();
-    console.log('✅ Backend base:', backendBase);
-
-    // --- DOM elements ---
-    const chatBox = document.getElementById("chat");
-    const typingDiv = document.getElementById("typing");
-    const typingText = document.getElementById("typing-text");
-    const input = document.getElementById("messageInput");
-    const statusText = document.getElementById("status-text"); // not used but kept
-    const welcomeScreen = document.getElementById('welcomeScreen');
-    const heartsContainer = document.getElementById('hearts-container');
-
-    // --- messages map for reactions ---
-    const messages = new Map();
-
-    // --- SOUND EFFECTS ---
-    const SOUND_URL = 'NOTIFY.mp3';
-
-    function playSound() {
-      try {
-        const audio = new Audio(SOUND_URL);
-        audio.volume = 0.6;
-        audio.play().catch(e => console.log('Audio play failed', e));
-      } catch (e) {
-        console.warn('Sound error', e);
+      // --- Helper: smooth scroll to bottom (if user is near bottom) ---
+      function scrollToBottomIfNeeded(force = false) {
+        const threshold = 150; // pixels from bottom
+        const distanceFromBottom = chatBox.scrollHeight - chatBox.scrollTop - chatBox.clientHeight;
+        if (force || distanceFromBottom < threshold) {
+          chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
+        }
       }
-    }
 
-    // --- BACKGROUND FLOATING HEARTS (subtle) ---
-    function createBackgroundHeart() {
-      const heart = document.createElement('div');
-      heart.className = 'heart-float';
-      const symbols = ['❤️', '💧', '🌸', '✨', '🕊️', '🌙'];
-      heart.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
-      heart.style.left = Math.random() * 100 + '%';
-      heart.style.animationDuration = (8 + Math.random() * 8) + 's';
-      heart.style.fontSize = (12 + Math.random() * 20) + 'px';
-      heart.style.opacity = 0.15 + Math.random() * 0.25;
-      heartsContainer.appendChild(heart);
-      setTimeout(() => heart.remove(), 11000);
-    }
-    setInterval(createBackgroundHeart, 600);
+      // --- SOUND EFFECTS (unchanged) ---
+      const SOUND_URL = 'NOTIFY.mp3';
+      function playSound() {
+        try {
+          const audio = new Audio(SOUND_URL);
+          audio.volume = 0.6;
+          audio.play().catch(e => console.log('Audio play failed', e));
+        } catch (e) { console.warn('Sound error', e); }
+      }
 
-    // --- ✨ SPECIAL LOVE HEARTS (triggered by keywords) – now fully opaque and crisp ---
-    function triggerLoveHearts(count = 7) {
-      const loveSymbols = [
-        '❤️', '💖', '💕', '💗', '💓', '💘', '💝', '💞', '❣️',
-        '🌸', '🌹', '🌺', '🌷', '💐', '🌼',
-        '✨', '💫', '🌟', '🌙', '☁️',
-        '🥰', '😍', '😘', '😻', '😇'
-      ];
-      for (let i = 0; i < count; i++) {
+      // --- BACKGROUND FLOATING HEARTS (subtle) ---
+      function createBackgroundHeart() {
         const heart = document.createElement('div');
-        heart.className = 'love-heart-float';
-        heart.innerHTML = loveSymbols[Math.floor(Math.random() * loveSymbols.length)];
+        heart.className = 'heart-float';
+        const symbols = ['❤️', '💧', '🌸', '✨', '🕊️', '🌙'];
+        heart.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
         heart.style.left = Math.random() * 100 + '%';
-        // bigger size range: 30px to 70px
-        const fontSize = 30 + Math.floor(Math.random() * 40);
-        heart.style.fontSize = fontSize + 'px';
-        // slight random rotation for organic feel
-        heart.style.transform = `rotate(${Math.random() * 40 - 20}deg)`;
-        // FULL OPAQUE – no transparency
-        heart.style.opacity = 1;
-        // duration between 4s and 9s (smooth but not too fast)
-        const duration = 4 + Math.random() * 6;
-        heart.style.animationDuration = duration + 's';
+        heart.style.animationDuration = (8 + Math.random() * 8) + 's';
+        heart.style.fontSize = (12 + Math.random() * 20) + 'px';
+        heart.style.opacity = 0.15 + Math.random() * 0.25;
         heartsContainer.appendChild(heart);
-        setTimeout(() => {
-          if (heart.parentNode) heart.remove();
-        }, duration * 1000 + 300);
+        setTimeout(() => heart.remove(), 11000);
       }
-    }
+      setInterval(createBackgroundHeart, 600);
 
-    // --- Check message for love keywords and trigger hearts ---
-    function checkForLoveWords(data) {
-      if (data.type !== 'message' || !data.text) return;
-      const text = data.text.toLowerCase();
-      const triggerWords = ['love', 'shreya', 'shreyu', 'himanshu', '❤️', '💖', '💕', '😍', '🥰', 'miss', 'baby',
-        'babu', 'sweet'
-      ];
-      let matchCount = 0;
-      triggerWords.forEach(word => {
-        if (text.includes(word.toLowerCase())) matchCount++;
-      });
-      if (matchCount > 0) {
-        // base 5 hearts + 2 per extra word, max 15
-        let heartCount = Math.min(5 + matchCount * 2, 15);
-        triggerLoveHearts(heartCount);
+      // --- SPECIAL LOVE HEARTS (triggered by keywords) ---
+      function triggerLoveHearts(count = 7) {
+        const loveSymbols = [
+          '❤️', '💖', '💕', '💗', '💓', '💘', '💝', '💞', '❣️',
+          '🌸', '🌹', '🌺', '🌷', '💐', '🌼',
+          '✨', '💫', '🌟', '🌙', '☁️',
+          '🥰', '😍', '😘', '😻', '😇'
+        ];
+        for (let i = 0; i < count; i++) {
+          const heart = document.createElement('div');
+          heart.className = 'love-heart-float';
+          heart.innerHTML = loveSymbols[Math.floor(Math.random() * loveSymbols.length)];
+          heart.style.left = Math.random() * 100 + '%';
+          const fontSize = 30 + Math.floor(Math.random() * 40);
+          heart.style.fontSize = fontSize + 'px';
+          heart.style.transform = `rotate(${Math.random() * 40 - 20}deg)`;
+          heart.style.animationDuration = (4 + Math.random() * 6) + 's';
+          heartsContainer.appendChild(heart);
+          setTimeout(() => heart.remove(), 10000);
+        }
       }
-    }
 
-    // --- WELCOME SCREEN FADE OUT ---
-    setTimeout(() => {
-      if (welcomeScreen) {
-        welcomeScreen.style.opacity = '0';
-        setTimeout(() => {
-          welcomeScreen.style.display = 'none';
-        }, 1000);
+      // --- Check message for love keywords and trigger hearts ---
+      function checkForLoveWords(data) {
+        if (data.type !== 'message' || !data.text) return;
+        const text = data.text.toLowerCase();
+        const triggerWords = ['love', 'shreya', 'shreyu', 'himanshu', '❤️', '💖', '💕', '😍', '🥰', 'miss', 'baby', 'babu', 'sweet'];
+        let matchCount = triggerWords.filter(word => text.includes(word)).length;
+        if (matchCount > 0) {
+          let heartCount = Math.min(5 + matchCount * 2, 15);
+          triggerLoveHearts(heartCount);
+        }
       }
-    }, 3000);
 
-    // --- BIRTHDAY COUNTDOWN (18 June) ---
-    function updateBirthdayCountdown() {
-      const now = new Date();
-      const currentYear = now.getFullYear();
-      let birthday = new Date(currentYear, 5, 18, 0, 0, 0);
-      if (now > birthday) {
-        birthday = new Date(currentYear + 1, 5, 18, 0, 0, 0);
+      // --- WELCOME SCREEN FADE OUT (unchanged) ---
+      setTimeout(() => {
+        if (welcomeScreen) {
+          welcomeScreen.style.opacity = '0';
+          setTimeout(() => {
+            welcomeScreen.style.display = 'none';
+          }, 1000);
+        }
+      }, 3000);
+
+      // --- BIRTHDAY COUNTDOWN (18 June) ---
+      function updateBirthdayCountdown() {
+        const now = new Date();
+        const currentYear = now.getFullYear();
+        let birthday = new Date(currentYear, 5, 18, 0, 0, 0);
+        if (now > birthday) {
+          birthday = new Date(currentYear + 1, 5, 18, 0, 0, 0);
+        }
+        const diffMs = birthday - now;
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        const diffHrs = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+        const diffSecs = Math.floor((diffMs % (1000 * 60)) / 1000);
+
+        let countdownStr = '';
+        if (diffDays === 0 && diffHrs === 0 && diffMins === 0 && diffSecs === 0) {
+          countdownStr = '🎉 TODAY IS THE DAY! 🎉';
+        } else {
+          countdownStr = `${diffDays}d ${diffHrs}h ${diffMins}m ${diffSecs}s`;
+        }
+        document.getElementById('countdown-timer').innerText = countdownStr;
       }
-      const diffMs = birthday - now;
-      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-      const diffHrs = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-      const diffSecs = Math.floor((diffMs % (1000 * 60)) / 1000);
+      updateBirthdayCountdown();
+      setInterval(updateBirthdayCountdown, 1000);
 
-      let countdownStr = '';
-      if (diffDays === 0 && diffHrs === 0 && diffMins === 0 && diffSecs === 0) {
-        countdownStr = '🎉 TODAY IS THE DAY! 🎉';
-      } else {
-        countdownStr = `${diffDays}d ${diffHrs}h ${diffMins}m ${diffSecs}s`;
-      }
-      document.getElementById('countdown-timer').innerText = countdownStr;
-    }
-    updateBirthdayCountdown();
-    setInterval(updateBirthdayCountdown, 1000);
+      // --- DOWNLOAD IMAGE FUNCTION (handles base64 & blob) ---
+      window.downloadImage = async function(imageUrl) {
+        try {
+          // If it's a base64 image, create blob directly
+          if (imageUrl.startsWith('data:')) {
+            const response = await fetch(imageUrl);
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'shreya-himanshu-image.jpg';
+            document.body.appendChild(link);
+            link.click();
+            setTimeout(() => {
+              URL.revokeObjectURL(url);
+              document.body.removeChild(link);
+            }, 100);
+          } else {
+            // Remote image – fetch as blob
+            const link = document.createElement('a');
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            const response = await fetch(imageUrl);
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            link.href = url;
+            link.download = 'shreya-himanshu-image.jpg';
+            link.click();
+            setTimeout(() => {
+              URL.revokeObjectURL(url);
+              document.body.removeChild(link);
+            }, 100);
+          }
+        } catch (err) {
+          console.error('Download failed, opening in new tab:', err);
+          window.open(imageUrl, '_blank');
+        }
+      };
 
-    // --- DOWNLOAD IMAGE FUNCTION ---
-    window.downloadImage = async function (imageUrl) {
-      try {
-        const link = document.createElement('a');
-        link.style.display = 'none';
-        document.body.appendChild(link);
-        const response = await fetch(imageUrl);
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
-        link.href = url;
-        link.download = 'shreya-himanshu-image.jpg';
-        link.click();
-        setTimeout(() => {
-          URL.revokeObjectURL(url);
-          document.body.removeChild(link);
-        }, 100);
-      } catch (err) {
-        console.error('Download failed, opening in new tab:', err);
-        window.open(imageUrl, '_blank');
-      }
-    };
+      // --- ADD MESSAGE (improved layout & image handling) ---
+      function addMessage(data, isOther) {
+        const messageDiv = document.createElement("div");
+        messageDiv.className = `message-wrapper relative ${isOther ? 'text-left' : 'text-right'} message-animation`;
+        messageDiv.dataset.id = data.id;
 
-    // --- ADD MESSAGE (with love heart trigger) ---
-    function addMessage(data, isOther) {
-      const messageDiv = document.createElement("div");
-      messageDiv.className = `message-wrapper relative ${isOther ? 'text-left' : 'text-right'} message-animation`;
-      messageDiv.dataset.id = data.id;
-
-      let content = '';
-      if (data.type === 'image') {
-        const imageUrl = data.url.startsWith('/') ? backendBase + data.url : data.url;
-        const escapedUrl = imageUrl.replace(/'/g, "\\'");
-        content = `<div class="relative inline-block max-w-xs rounded-3xl shadow-md overflow-hidden bg-white/30 backdrop-blur-sm border border-white/40">
-            <img src="${imageUrl}" class="w-full h-auto img-load" 
-                 onload="this.classList.remove('img-load'); this.classList.add('img-loaded');" 
-                 onerror="this.onerror=null; this.src='https://via.placeholder.com/200?text=Image+failed';" />
-            <button onclick="downloadImage('${escapedUrl}')" class="download-btn absolute top-2 right-2 rounded-full p-2.5 z-20 group" title="Save image to device">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        let content = '';
+        if (data.type === 'image') {
+          // For base64, use directly; for path, prepend backend base
+          let imageUrl = data.url;
+          if (!imageUrl.startsWith('data:') && !imageUrl.startsWith('http')) {
+            imageUrl = backendBase + imageUrl;
+          }
+          const escapedUrl = imageUrl.replace(/'/g, "\\'");
+          content = `<div class="image-bubble relative inline-block">
+            <img src="${imageUrl}" loading="lazy" class="img-load" 
+                 onload="this.classList.remove('img-load'); this.classList.add('img-loaded'); scrollToBottomIfNeeded(false)"
+                 onerror="this.onerror=null; this.src='https://via.placeholder.com/400x300?text=Image+failed';">
+            <button onclick="downloadImage('${escapedUrl}')" class="download-btn" title="Save image to device" aria-label="Download image">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 4v12m0 0l-3-3m3 3l3-3" />
               </svg>
             </button>
           </div>`;
-      } else {
-        const bubbleClass = isOther ? 'bubble-left' : 'bubble-right';
-        content =
-          `<div class="${bubbleClass} inline-block px-5 py-3 max-w-xs shadow-lg backdrop-blur-sm">${data.text}</div>`;
+        } else {
+          const bubbleClass = isOther ? 'bubble-left' : 'bubble-right';
+          content = `<div class="${bubbleClass} inline-block">${data.text}</div>`;
+        }
+
+        const now = new Date();
+        const timestamp = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const receipt = !isOther ? '<span class="text-xs ml-1.5 text-white/70">✓✓</span>' : '';
+
+        const reactionPicker = `
+          <div class="reaction-picker absolute bottom-0 ${isOther ? 'left-0' : 'right-0'} -translate-y-2 z-10">
+            <button onclick="sendReaction('${data.id}', '❤️')" class="reaction-btn" aria-label="React with heart">❤️</button>
+            <button onclick="sendReaction('${data.id}', '🥺')" class="reaction-btn" aria-label="React with pleading face">🥺</button>
+            <button onclick="sendReaction('${data.id}', '😏')" class="reaction-btn" aria-label="React with smirk">😏</button>
+            <button onclick="sendReaction('${data.id}', '🕊️')" class="reaction-btn" aria-label="React with dove">🕊️</button>
+          </div>`;
+
+        messageDiv.innerHTML = `${content}<div class="text-xs text-gray-400 mt-1 flex items-center justify-end gap-1"><span>${timestamp}</span>${receipt}</div>${reactionPicker}`;
+        chatBox.appendChild(messageDiv);
+        messages.set(data.id, messageDiv);
+
+        // Scroll to bottom if new message is from me or if user is near bottom
+        scrollToBottomIfNeeded(!isOther); // force for own messages
+
+        // ✨ Trigger love hearts for keywords
+        checkForLoveWords(data);
       }
 
-      const now = new Date();
-      const timestamp = now.toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-      const receipt = !isOther ? '<span class="text-xs ml-1.5 text-white/70">✓✓</span>' : '';
+      // Expose scroll helper for image onload
+      window.scrollToBottomIfNeeded = scrollToBottomIfNeeded;
 
-      const reactionPicker = `
-        <div class="reaction-picker absolute bottom-0 ${isOther ? 'left-0' : 'right-0'} -translate-y-2 bg-white/70 backdrop-blur-sm rounded-full px-1.5 py-0.5 gap-1 text-lg z-10 shadow-md">
-          <button onclick="sendReaction('${data.id}', '❤️')" class="reaction-btn hover:scale-125 transition">❤️</button>
-          <button onclick="sendReaction('${data.id}', '🥺')" class="reaction-btn hover:scale-125 transition">🥺</button>
-          <button onclick="sendReaction('${data.id}', '😏')" class="reaction-btn hover:scale-125 transition">😏</button>
-          <button onclick="sendReaction('${data.id}', '🕊️')" class="reaction-btn hover:scale-125 transition">🕊️</button>
-        </div>`;
+      // --- WebSocket message handler (unchanged logic, improved readability) ---
+      ws.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        console.log("📩 Received:", data);
 
-      messageDiv.innerHTML =
-        `${content}<div class="text-xs text-gray-400 mt-1 flex items-center justify-end gap-1"><span>${timestamp}</span>${receipt}</div>${reactionPicker}`;
-      chatBox.appendChild(messageDiv);
-      chatBox.scrollTo({
-        top: chatBox.scrollHeight,
-        behavior: 'smooth'
-      });
-      messages.set(data.id, messageDiv);
-
-      // ✨ TRIGGER LOVE HEARTS if message contains keywords
-      checkForLoveWords(data);
-    }
-
-    // --- WebSocket message handler ---
-    ws.onmessage = function (event) {
-      const data = JSON.parse(event.data);
-      console.log("📩 Received:", data);
-
-      switch (data.type) {
-        case "message":
-          addMessage(data, data.sender !== myUsername);
-          if (data.sender !== myUsername) playSound();
-          setTimeout(() => {
-            ws.send(JSON.stringify({
-              type: "read",
-              messageId: data.id
-            }));
-          }, 1000);
-          break;
-        case "typing":
-          const phrases = ["Himanshu is thinking of you", "Himanshu is smiling", "Your prince writes...",
-            "Himanshu sends a whisper", "Himanshu is dreaming"
-          ];
-          typingText.innerText = phrases[Math.floor(Math.random() * phrases.length)];
-          typingDiv.classList.remove("hidden");
-          setTimeout(() => typingDiv.classList.add("hidden"), 2500);
-          break;
-        case "reaction":
-          applyReaction(data.messageId, data.emoji);
-          break;
-        case "read":
-          markAsRead(data.messageId);
-          break;
-        case "status":
-          updateStatus(data.user, data.status, data.last_seen);
-          break;
-        case "image":
-          addMessage(data, data.sender !== myUsername);
-          if (data.sender !== myUsername) playSound();
-          break;
-        default:
-          break;
-      }
-    };
-
-    // --- send message ---
-    window.sendMessage = function () {
-      const text = input.value.trim();
-      if (!text) return;
-
-      const id = Date.now() + '-' + Math.random().toString(36);
-      const message = {
-        type: "message",
-        id: id,
-        text: text,
-        sender: myUsername
+        switch (data.type) {
+          case "message":
+            addMessage(data, data.sender !== myUsername);
+            if (data.sender !== myUsername) playSound();
+            setTimeout(() => {
+              ws.send(JSON.stringify({ type: "read", messageId: data.id }));
+            }, 1000);
+            break;
+          case "typing":
+            const phrases = ["Himanshu is thinking of you", "Himanshu is smiling", "Your prince writes...", "Himanshu sends a whisper", "Himanshu is dreaming"];
+            typingText.innerText = phrases[Math.floor(Math.random() * phrases.length)];
+            typingDiv.classList.remove("hidden");
+            setTimeout(() => typingDiv.classList.add("hidden"), 2500);
+            break;
+          case "reaction":
+            applyReaction(data.messageId, data.emoji);
+            break;
+          case "read":
+            markAsRead(data.messageId);
+            break;
+          case "status":
+            updateStatus(data.user, data.status, data.last_seen);
+            break;
+          case "image":
+            addMessage(data, data.sender !== myUsername);
+            if (data.sender !== myUsername) playSound();
+            break;
+          default:
+            break;
+        }
       };
-      addMessage(message, false);
-      ws.send(JSON.stringify(message));
-      playSound();
-      input.value = "";
-    };
 
-    // --- image upload ---
-    document.getElementById('image-upload').addEventListener('change', function (e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (e) => {
+      // --- send message (keep focus) ---
+      window.sendMessage = function() {
+        const text = input.value.trim();
+        if (!text) return;
+
         const id = Date.now() + '-' + Math.random().toString(36);
         const message = {
-          type: "image",
+          type: "message",
           id: id,
-          url: e.target.result,
+          text: text,
           sender: myUsername
         };
         addMessage(message, false);
         ws.send(JSON.stringify(message));
         playSound();
+        input.value = "";
+        input.focus();  // keep keyboard open on mobile
       };
-      reader.readAsDataURL(file);
-      this.value = '';
-    });
 
-    // --- reaction functions ---
-    window.sendReaction = function (messageId, emoji) {
-      ws.send(JSON.stringify({
-        type: "reaction",
-        messageId: messageId,
-        emoji: emoji
-      }));
-      applyReaction(messageId, emoji);
-    };
+      // --- image upload ---
+      document.getElementById('image-upload').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const id = Date.now() + '-' + Math.random().toString(36);
+          const message = {
+            type: "image",
+            id: id,
+            url: e.target.result,  // base64
+            sender: myUsername
+          };
+          addMessage(message, false);
+          ws.send(JSON.stringify(message));
+          playSound();
+        };
+        reader.readAsDataURL(file);
+        this.value = '';
+      });
 
-    function applyReaction(messageId, emoji) {
-      const msgDiv = messages.get(messageId);
-      if (!msgDiv) return;
-      let reactionBadge = msgDiv.querySelector('.reaction-badge');
-      if (reactionBadge) reactionBadge.remove();
-      reactionBadge = document.createElement('div');
-      reactionBadge.className =
-        'reaction-badge absolute -bottom-2 -right-2 bg-white/70 backdrop-blur-sm rounded-full px-1.5 text-sm shadow-md z-20';
-      reactionBadge.textContent = emoji;
-      msgDiv.appendChild(reactionBadge);
-    }
+      // --- reaction functions ---
+      window.sendReaction = function(messageId, emoji) {
+        ws.send(JSON.stringify({ type: "reaction", messageId: messageId, emoji: emoji }));
+        applyReaction(messageId, emoji);
+      };
 
-    function markAsRead(messageId) {
-      const msgDiv = messages.get(messageId);
-      if (!msgDiv) return;
-      const receiptSpan = msgDiv.querySelector('.text-gray-400 span:last-child');
-      if (receiptSpan) receiptSpan.textContent = '✓✓';
-    }
+      function applyReaction(messageId, emoji) {
+        const msgDiv = messages.get(messageId);
+        if (!msgDiv) return;
+        let reactionBadge = msgDiv.querySelector('.reaction-badge');
+        if (reactionBadge) reactionBadge.remove();
+        reactionBadge = document.createElement('div');
+        reactionBadge.className = 'reaction-badge absolute -bottom-2 -right-2 bg-white/70 backdrop-blur-sm rounded-full px-1.5 text-sm shadow-md z-20';
+        reactionBadge.textContent = emoji;
+        msgDiv.appendChild(reactionBadge);
+      }
 
-    function updateStatus(user, status, lastSeen) {
-      if (user === otherUsername && statusText) {
-        if (status === 'online') {
-          statusText.innerHTML =
-            '<span class="inline-block w-1.5 h-1.5 bg-emerald-400 rounded-full"></span><span class="ml-1">online now</span>';
-        } else {
-          const last = lastSeen ? new Date(lastSeen).toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit'
-          }) : 'recently';
-          statusText.innerHTML =
-            '<span class="inline-block w-1.5 h-1.5 bg-gray-400 rounded-full"></span><span class="ml-1">last seen ' +
-            last + '</span>';
+      function markAsRead(messageId) {
+        const msgDiv = messages.get(messageId);
+        if (!msgDiv) return;
+        const receiptSpan = msgDiv.querySelector('.text-gray-400 span:last-child');
+        if (receiptSpan) receiptSpan.textContent = '✓✓';
+      }
+
+      function updateStatus(user, status, lastSeen) {
+        const statusText = document.getElementById('status-text'); // may be missing, but kept for compatibility
+        if (user === otherUsername && statusText) {
+          if (status === 'online') {
+            statusText.innerHTML = '<span class="inline-block w-1.5 h-1.5 bg-emerald-400 rounded-full"></span><span class="ml-1">online now</span>';
+          } else {
+            const last = lastSeen ? new Date(lastSeen).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'recently';
+            statusText.innerHTML = '<span class="inline-block w-1.5 h-1.5 bg-gray-400 rounded-full"></span><span class="ml-1">last seen ' + last + '</span>';
+          }
         }
       }
-    }
 
-    // --- typing indicator ---
-    input.addEventListener("input", () => {
-      ws.send(JSON.stringify({
-        type: "typing"
-      }));
-    });
-    input.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") sendMessage();
-    });
+      // --- typing indicator (debounced) ---
+      let typingTimeout;
+      input.addEventListener("input", () => {
+        ws.send(JSON.stringify({ type: "typing" }));
+        // optional debounce to avoid spam – but original sends on every input
+      });
+      input.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();  // prevent any form-like behaviour
+          sendMessage();
+        }
+      });
 
-    // --- theme switcher ---
-    window.setTheme = function (theme) {
-      const body = document.body;
-      if (theme === 'pink') {
-        body.style.background = 'linear-gradient(145deg, #fce7f3, #fbcfe8, #f5d0fe, #e9d5ff)';
-      } else if (theme === 'midnight') {
-        body.style.background = 'linear-gradient(145deg, #1e1b4b, #2e1a4a, #2d1f4b, #1f1a4b)';
-      } else if (theme === 'pastel') {
-        body.style.background = 'linear-gradient(145deg, #d9b4fe, #bae6fd, #fbcfe8, #fef9c3)';
-      }
-    };
+      // --- theme switcher ---
+      window.setTheme = function(theme) {
+        const body = document.body;
+        if (theme === 'pink') {
+          body.style.background = 'linear-gradient(145deg, #fce7f3, #fbcfe8, #f5d0fe, #e9d5ff)';
+        } else if (theme === 'midnight') {
+          body.style.background = 'linear-gradient(145deg, #1e1b4b, #2e1a4a, #2d1f4b, #1f1a4b)';
+        } else if (theme === 'pastel') {
+          body.style.background = 'linear-gradient(145deg, #d9b4fe, #bae6fd, #fbcfe8, #fef9c3)';
+        }
+      };
 
-    ws.onopen = () => console.log("💫 Connected");
-    ws.onerror = (err) => console.error("❌ WebSocket error", err);
-  })();
-</script>
+      ws.onopen = () => console.log("💫 Connected");
+      ws.onerror = (err) => console.error("❌ WebSocket error", err);
+    })();
+  </script>
 </body>
-
 </html>
