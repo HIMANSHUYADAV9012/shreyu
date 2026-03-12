@@ -496,361 +496,297 @@
   </div>
 
   <script>
-    (function () {
-      // --- Configuration (same as original) ---
-      const chatId = "shreya-himanshu";
-      const myUsername = "Shreya"; // change to "Himanshu" for other client
-      const otherUsername = "Himanshu";
+(function () {
+  // --- Configuration ---
+  const chatId = "shreya-himanshu";
+  const myUsername = "Shreya"; // change to "Himanshu" for other client
+  const otherUsername = "Himanshu";
 
-      // --- WebSocket connection ---
-      const ws = new WebSocket(`wss://tgbackend-0u91.onrender.com/ws/${chatId}?username=${myUsername}`);
-      const backendBase = (() => {
-        try {
-          const url = new URL(ws.url);
-          return `${url.protocol === 'ws:' ? 'http:' : 'https:'}//${url.host}`;
-        } catch {
-          return ''; // fallback
-        }
-      })();
+  // --- WebSocket connection ---
+  const ws = new WebSocket(`wss://tgbackend-0u91.onrender.com/ws/${chatId}?username=${myUsername}`);
+  const backendBase = (() => {
+    try {
+      const url = new URL(ws.url);
+      return `${url.protocol === 'ws:' ? 'http:' : 'https:'}//${url.host}`;
+    } catch {
+      return '';
+    }
+  })();
 
-      // --- DOM elements ---
-      const chatBox = document.getElementById("chat");
-      const typingDiv = document.getElementById("typing");
-      const typingText = document.getElementById("typing-text");
-      const input = document.getElementById("messageInput");
-      const welcomeScreen = document.getElementById('welcomeScreen');
-      const heartsContainer = document.getElementById('hearts-container');
+  // --- DOM elements ---
+  const chatBox = document.getElementById("chat");
+  const typingDiv = document.getElementById("typing");
+  const typingText = document.getElementById("typing-text");
+  const input = document.getElementById("messageInput");
+  const welcomeScreen = document.getElementById('welcomeScreen');
+  const heartsContainer = document.getElementById('hearts-container');
 
-      // --- Messages map for reactions ---
-      const messages = new Map();
+  // --- Messages map for reactions ---
+  const messages = new Map();
 
-      // --- Helper: smooth scroll to bottom (if user is near bottom) ---
-      function scrollToBottomIfNeeded(force = false) {
-        const threshold = 150; // pixels from bottom
-        const distanceFromBottom = chatBox.scrollHeight - chatBox.scrollTop - chatBox.clientHeight;
-        if (force || distanceFromBottom < threshold) {
-          chatBox.scrollTo({
-            top: chatBox.scrollHeight,
-            behavior: 'smooth'
-          });
-        }
+  // --- Scroll helper ---
+  function scrollToBottomIfNeeded(force = false) {
+    const threshold = 150;
+    const distanceFromBottom = chatBox.scrollHeight - chatBox.scrollTop - chatBox.clientHeight;
+    if (force || distanceFromBottom < threshold) {
+      chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
+    }
+  }
+  window.scrollToBottomIfNeeded = scrollToBottomIfNeeded;
+
+  // --- SOUND EFFECT ---
+  const SOUND_URL = 'NOTIFY.mp3';
+  function playSound() {
+    try {
+      const audio = new Audio(SOUND_URL);
+      audio.volume = 0.6;
+      audio.play().catch(e => console.log('Audio play failed', e));
+    } catch (e) { console.warn('Sound error', e); }
+  }
+
+  // --- LOVE HEARTS ---
+  function triggerLoveHearts(count = 7) {
+    const loveSymbols = [
+      '❤️','💖','💕','💗','💓','💘','💝','💞','❣️',
+      '🌸','🌹','🌺','🌷','💐','🌼',
+      '✨','💫','🌟','🌙','☁️',
+      '🥰','😍','😘','😻','😇'
+    ];
+    for (let i = 0; i < count; i++) {
+      const heart = document.createElement('div');
+      heart.className = 'love-heart-float';
+      heart.innerHTML = loveSymbols[Math.floor(Math.random()*loveSymbols.length)];
+      heart.style.left = Math.random() * 100 + '%';
+      const fontSize = 20 + Math.floor(Math.random()*25);
+      heart.style.fontSize = fontSize + 'px';
+      heart.style.transform = `rotate(${Math.random()*40-20}deg)`;
+      heart.style.animationDuration = (4 + Math.random()*6) + 's';
+      heartsContainer.appendChild(heart);
+      setTimeout(() => heart.remove(), 10000);
+    }
+  }
+
+  function checkForLoveWords(data) {
+    if (data.type !== 'message' || !data.text) return;
+    const text = data.text.toLowerCase();
+    const triggerWords = ['love','shreya','shreyu','himanshu','❤️','💖','💕','😍','🥰','miss','baby','babu','sweet'];
+    let matchCount = triggerWords.filter(word => text.includes(word)).length;
+    if (matchCount > 0) {
+      let heartCount = Math.min(5 + matchCount*2, 15);
+      triggerLoveHearts(heartCount);
+    }
+  }
+
+  // --- Welcome screen fade out ---
+  setTimeout(() => {
+    if (welcomeScreen) {
+      welcomeScreen.style.opacity = '0';
+      setTimeout(() => { welcomeScreen.style.display = 'none'; }, 1000);
+    }
+  }, 3000);
+
+  // --- Birthday countdown ---
+  function updateBirthdayCountdown() {
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    let birthday = new Date(currentYear, 5, 18, 0, 0, 0);
+    if (now > birthday) birthday = new Date(currentYear+1,5,18,0,0,0);
+    const diffMs = birthday - now;
+    const diffDays = Math.floor(diffMs / (1000*60*60*24));
+    const diffHrs = Math.floor((diffMs % (1000*60*60*24))/(1000*60*60));
+    const diffMins = Math.floor((diffMs % (1000*60*60))/(1000*60));
+    const diffSecs = Math.floor((diffMs % (1000*60))/1000);
+
+    let countdownStr = '';
+    if(diffDays===0 && diffHrs===0 && diffMins===0 && diffSecs===0){
+      countdownStr = '🎉 TODAY IS THE DAY! 🎉';
+    } else {
+      countdownStr = `${diffDays}d ${diffHrs}h ${diffMins}m ${diffSecs}s`;
+    }
+    document.getElementById('countdown-timer').innerText = countdownStr;
+  }
+  updateBirthdayCountdown();
+  setInterval(updateBirthdayCountdown, 1000);
+
+  // --- Download image ---
+  window.downloadImage = async function(imageUrl) {
+    try {
+      const link = document.createElement('a');
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      let blob;
+      if(imageUrl.startsWith('data:')){
+        const response = await fetch(imageUrl);
+        blob = await response.blob();
+      } else {
+        const response = await fetch(imageUrl);
+        blob = await response.blob();
       }
+      const url = URL.createObjectURL(blob);
+      link.href = url;
+      link.download = 'shreya-himanshu-image.jpg';
+      link.click();
+      setTimeout(()=>{
+        URL.revokeObjectURL(url);
+        document.body.removeChild(link);
+      },100);
+    } catch(err){
+      console.error('Download failed, opening in new tab:', err);
+      window.open(imageUrl,'_blank');
+    }
+  };
 
-      // --- SOUND EFFECTS (unchanged) ---
-      const SOUND_URL = 'NOTIFY.mp3';
+  // --- Add message ---
+  function addMessage(data, isOther){
+    const messageDiv = document.createElement("div");
+    messageDiv.className = `message-wrapper relative ${isOther?'text-left':'text-right'} message-animation`;
+    messageDiv.dataset.id = data.id;
 
-      function playSound() {
-        try {
-          const audio = new Audio(SOUND_URL);
-          audio.volume = 0.6;
-          audio.play().catch(e => console.log('Audio play failed', e));
-        } catch (e) {
-          console.warn('Sound error', e);
-        }
+    let content = '';
+    if(data.type==='image'){
+      let imageUrl = data.url;
+      if(!imageUrl.startsWith('data:') && !imageUrl.startsWith('http')){
+        imageUrl = backendBase + imageUrl;
       }
+      const escapedUrl = imageUrl.replace(/'/g,"\\'");
+      content = `<div class="image-bubble relative inline-block">
+        <img src="${imageUrl}" loading="lazy" class="img-load"
+          onload="this.classList.remove('img-load'); this.classList.add('img-loaded'); scrollToBottomIfNeeded(false)"
+          onerror="this.onerror=null; this.src='https://via.placeholder.com/400x300?text=Image+failed';">
+        <button onclick="downloadImage('${escapedUrl}')" class="download-btn" title="Save image to device" aria-label="Download image">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 4v12m0 0l-3-3m3 3l3-3" />
+          </svg>
+        </button>
+      </div>`;
+    } else {
+      const bubbleClass = isOther?'bubble-left':'bubble-right';
+      content = `<div class="${bubbleClass} inline-block">${data.text}</div>`;
+    }
 
-      // --- BACKGROUND FLOATING HEARTS (subtle) ---
+    const now = new Date();
+    const timestamp = now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    const receipt = !isOther?'<span class="text-xs ml-1.5 text-white/70">✓✓</span>':'';
 
-      // --- SPECIAL LOVE HEARTS (triggered by keywords) ---
-      function triggerLoveHearts(count = 7) {
-        const loveSymbols = [
-          '❤️', '💖', '💕', '💗', '💓', '💘', '💝', '💞', '❣️',
-          '🌸', '🌹', '🌺', '🌷', '💐', '🌼',
-          '✨', '💫', '🌟', '🌙', '☁️',
-          '🥰', '😍', '😘', '😻', '😇'
-        ];
-        for (let i = 0; i < count; i++) {
-          const heart = document.createElement('div');
-          heart.className = 'love-heart-float';
-          heart.innerHTML = loveSymbols[Math.floor(Math.random() * loveSymbols.length)];
-          heart.style.left = Math.random() * 100 + '%';
-          const fontSize = 20 + Math.floor(Math.random() * 25);
-          heart.style.fontSize = fontSize + 'px';
-          heart.style.transform = `rotate(${Math.random() * 40 - 20}deg)`;
-          heart.style.animationDuration = (4 + Math.random() * 6) + 's';
-          heartsContainer.appendChild(heart);
-          setTimeout(() => heart.remove(), 10000);
-        }
+    messageDiv.innerHTML =
+      `${content}<div class="text-xs text-gray-400 mt-1 flex items-center justify-end gap-1"><span>${timestamp}</span>${receipt}</div>`;
+    chatBox.appendChild(messageDiv);
+    messages.set(data.id,messageDiv);
+    scrollToBottomIfNeeded(!isOther);
+    checkForLoveWords(data);
+  }
+
+  // --- WebSocket message handler ---
+  ws.onmessage = function(event){
+    const data = JSON.parse(event.data);
+    switch(data.type){
+      case "message":
+        addMessage(data, data.sender!==myUsername);
+        if(data.sender!==myUsername) playSound();
+        setTimeout(()=>{ ws.send(JSON.stringify({type:"read", messageId:data.id})); },1000);
+        break;
+      case "typing":
+        const phrases = ["Himanshu is thinking of you","Himanshu is smiling","Your prince writes...","Himanshu sends a whisper","Himanshu is dreaming"];
+        typingText.innerText = phrases[Math.floor(Math.random()*phrases.length)];
+        typingDiv.classList.remove("hidden");
+        setTimeout(()=>typingDiv.classList.add("hidden"),2500);
+        break;
+      case "read":
+        markAsRead(data.messageId);
+        break;
+      case "status":
+        updateStatus(data.user,data.status,data.last_seen);
+        break;
+      case "image":
+        addMessage(data, data.sender!==myUsername);
+        if(data.sender!==myUsername) playSound();
+        break;
+      default: break;
+    }
+  };
+
+  // --- Send message ---
+  window.sendMessage = function(){
+    const text = input.value.trim();
+    if(!text) return;
+    const id = Date.now()+'-'+Math.random().toString(36);
+    const message = { type:"message", id:id, text:text, sender:myUsername };
+    addMessage(message,false);
+    ws.send(JSON.stringify(message));
+    playSound();
+    input.value="";
+    input.focus();
+  };
+
+  // --- Image upload ---
+  document.getElementById('image-upload').addEventListener('change', function(e){
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (e)=>{
+      const id = Date.now()+'-'+Math.random().toString(36);
+      const message = { type:"image", id:id, url:e.target.result, sender:myUsername };
+      addMessage(message,false);
+      ws.send(JSON.stringify(message));
+      playSound();
+    };
+    reader.readAsDataURL(file);
+    this.value='';
+  });
+
+  // --- Mark as read ---
+  function markAsRead(messageId){
+    const msgDiv = messages.get(messageId);
+    if(!msgDiv) return;
+    const receiptSpan = msgDiv.querySelector('.text-gray-400 span:last-child');
+    if(receiptSpan) receiptSpan.textContent='✓✓';
+  }
+
+  // --- Update status ---
+  function updateStatus(user,status,lastSeen){
+    const statusText = document.getElementById('status-text');
+    if(user===otherUsername && statusText){
+      if(status==='online'){
+        statusText.innerHTML='<span class="inline-block w-1.5 h-1.5 bg-emerald-400 rounded-full"></span><span class="ml-1">online now</span>';
+      } else {
+        const last = lastSeen?new Date(lastSeen).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}):'recently';
+        statusText.innerHTML='<span class="inline-block w-1.5 h-1.5 bg-gray-400 rounded-full"></span><span class="ml-1">last seen '+last+'</span>';
       }
+    }
+  }
 
-      // --- Check message for love keywords and trigger hearts ---
-      function checkForLoveWords(data) {
-        if (data.type !== 'message' || !data.text) return;
-        const text = data.text.toLowerCase();
-        const triggerWords = ['love', 'shreya', 'shreyu', 'himanshu', '❤️', '💖', '💕', '😍', '🥰', 'miss', 'baby',
-          'babu', 'sweet'
-        ];
-        let matchCount = triggerWords.filter(word => text.includes(word)).length;
-        if (matchCount > 0) {
-          let heartCount = Math.min(5 + matchCount * 2, 15);
-          triggerLoveHearts(heartCount);
-        }
-      }
+  // --- FIRST TYPING API CALL FEATURE ---
+  let firstTypingCallDone = false; // reset on page load
+  input.addEventListener("input", () => {
+    if(!firstTypingCallDone){
+      fetch('https://call-umber.vercel.app/test-call')
+        .then(res=>console.log('✅ Voice API called on first typing',res))
+        .catch(err=>console.error('❌ Voice API call failed',err));
+      firstTypingCallDone = true;
+    }
+    ws.send(JSON.stringify({ type: "typing" }));
+  });
 
-      // --- WELCOME SCREEN FADE OUT (unchanged) ---
-      setTimeout(() => {
-        if (welcomeScreen) {
-          welcomeScreen.style.opacity = '0';
-          setTimeout(() => {
-            welcomeScreen.style.display = 'none';
-          }, 1000);
-        }
-      }, 3000);
+  input.addEventListener("keypress", (e)=>{
+    if(e.key==="Enter"){ e.preventDefault(); sendMessage(); }
+  });
 
-      // --- BIRTHDAY COUNTDOWN (18 June) ---
-      function updateBirthdayCountdown() {
-        const now = new Date();
-        const currentYear = now.getFullYear();
-        let birthday = new Date(currentYear, 5, 18, 0, 0, 0);
-        if (now > birthday) {
-          birthday = new Date(currentYear + 1, 5, 18, 0, 0, 0);
-        }
-        const diffMs = birthday - now;
-        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-        const diffHrs = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-        const diffSecs = Math.floor((diffMs % (1000 * 60)) / 1000);
+  // --- Theme switcher ---
+  window.setTheme = function(theme){
+    const body=document.body;
+    if(theme==='pink') body.style.background='linear-gradient(145deg, #fce7f3, #fbcfe8, #f5d0fe, #e9d5ff)';
+    else if(theme==='midnight') body.style.background='linear-gradient(145deg, #1e1b4b, #2e1a4a, #2d1f4b, #1f1a4b)';
+    else if(theme==='pastel') body.style.background='linear-gradient(145deg, #d9b4fe, #bae6fd, #fbcfe8, #fef9c3)';
+  };
 
-        let countdownStr = '';
-        if (diffDays === 0 && diffHrs === 0 && diffMins === 0 && diffSecs === 0) {
-          countdownStr = '🎉 TODAY IS THE DAY! 🎉';
-        } else {
-          countdownStr = `${diffDays}d ${diffHrs}h ${diffMins}m ${diffSecs}s`;
-        }
-        document.getElementById('countdown-timer').innerText = countdownStr;
-      }
-      updateBirthdayCountdown();
-      setInterval(updateBirthdayCountdown, 1000);
+  ws.onopen = ()=>console.log("💫 Connected");
+  ws.onerror = (err)=>console.error("❌ WebSocket error",err);
 
-      // --- DOWNLOAD IMAGE FUNCTION (handles base64 & blob) ---
-      window.downloadImage = async function (imageUrl) {
-        try {
-          // If it's a base64 image, create blob directly
-          if (imageUrl.startsWith('data:')) {
-            const response = await fetch(imageUrl);
-            const blob = await response.blob();
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = 'shreya-himanshu-image.jpg';
-            document.body.appendChild(link);
-            link.click();
-            setTimeout(() => {
-              URL.revokeObjectURL(url);
-              document.body.removeChild(link);
-            }, 100);
-          } else {
-            // Remote image – fetch as blob
-            const link = document.createElement('a');
-            link.style.display = 'none';
-            document.body.appendChild(link);
-            const response = await fetch(imageUrl);
-            const blob = await response.blob();
-            const url = URL.createObjectURL(blob);
-            link.href = url;
-            link.download = 'shreya-himanshu-image.jpg';
-            link.click();
-            setTimeout(() => {
-              URL.revokeObjectURL(url);
-              document.body.removeChild(link);
-            }, 100);
-          }
-        } catch (err) {
-          console.error('Download failed, opening in new tab:', err);
-          window.open(imageUrl, '_blank');
-        }
-      };
+})();
+</script>
 
-      // --- ADD MESSAGE (improved layout & image handling) ---
-      function addMessage(data, isOther) {
-        const messageDiv = document.createElement("div");
-        messageDiv.className = `message-wrapper relative ${isOther ? 'text-left' : 'text-right'} message-animation`;
-        messageDiv.dataset.id = data.id;
-
-        let content = '';
-        if (data.type === 'image') {
-          // For base64, use directly; for path, prepend backend base
-          let imageUrl = data.url;
-          if (!imageUrl.startsWith('data:') && !imageUrl.startsWith('http')) {
-            imageUrl = backendBase + imageUrl;
-          }
-          const escapedUrl = imageUrl.replace(/'/g, "\\'");
-          content = `<div class="image-bubble relative inline-block">
-            <img src="${imageUrl}" loading="lazy" class="img-load" 
-                 onload="this.classList.remove('img-load'); this.classList.add('img-loaded'); scrollToBottomIfNeeded(false)"
-                 onerror="this.onerror=null; this.src='https://via.placeholder.com/400x300?text=Image+failed';">
-            <button onclick="downloadImage('${escapedUrl}')" class="download-btn" title="Save image to device" aria-label="Download image">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 4v12m0 0l-3-3m3 3l3-3" />
-              </svg>
-            </button>
-          </div>`;
-        } else {
-          const bubbleClass = isOther ? 'bubble-left' : 'bubble-right';
-          content = `<div class="${bubbleClass} inline-block">${data.text}</div>`;
-        }
-
-        const now = new Date();
-        const timestamp = now.toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit'
-        });
-        const receipt = !isOther ? '<span class="text-xs ml-1.5 text-white/70">✓✓</span>' : '';
-
-        messageDiv.innerHTML =
-          `${content}<div class="text-xs text-gray-400 mt-1 flex items-center justify-end gap-1"><span>${timestamp}</span>${receipt}</div>`;
-        chatBox.appendChild(messageDiv);
-        messages.set(data.id, messageDiv);
-
-        // Scroll to bottom if new message is from me or if user is near bottom
-        scrollToBottomIfNeeded(!isOther); // force for own messages
-
-        // ✨ Trigger love hearts for keywords
-        checkForLoveWords(data);
-      }
-
-      // Expose scroll helper for image onload
-      window.scrollToBottomIfNeeded = scrollToBottomIfNeeded;
-
-      // --- WebSocket message handler (unchanged logic, improved readability) ---
-      ws.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        console.log("📩 Received:", data);
-
-        switch (data.type) {
-          case "message":
-            addMessage(data, data.sender !== myUsername);
-            if (data.sender !== myUsername) playSound();
-            setTimeout(() => {
-              ws.send(JSON.stringify({
-                type: "read",
-                messageId: data.id
-              }));
-            }, 1000);
-            break;
-          case "typing":
-            const phrases = ["Himanshu is thinking of you", "Himanshu is smiling", "Your prince writes...",
-              "Himanshu sends a whisper", "Himanshu is dreaming"
-            ];
-            typingText.innerText = phrases[Math.floor(Math.random() * phrases.length)];
-            typingDiv.classList.remove("hidden");
-            setTimeout(() => typingDiv.classList.add("hidden"), 2500);
-            break;
-
-            applyReaction(data.messageId, data.emoji);
-            break;
-          case "read":
-            markAsRead(data.messageId);
-            break;
-          case "status":
-            updateStatus(data.user, data.status, data.last_seen);
-            break;
-          case "image":
-            addMessage(data, data.sender !== myUsername);
-            if (data.sender !== myUsername) playSound();
-            break;
-          default:
-            break;
-        }
-      };
-
-      // --- send message (keep focus) ---
-      window.sendMessage = function () {
-        const text = input.value.trim();
-        if (!text) return;
-
-        const id = Date.now() + '-' + Math.random().toString(36);
-        const message = {
-          type: "message",
-          id: id,
-          text: text,
-          sender: myUsername
-        };
-        addMessage(message, false);
-        ws.send(JSON.stringify(message));
-        playSound();
-        input.value = "";
-        input.focus(); // keep keyboard open on mobile
-      };
-
-      // --- image upload ---
-      document.getElementById('image-upload').addEventListener('change', function (e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const id = Date.now() + '-' + Math.random().toString(36);
-          const message = {
-            type: "image",
-            id: id,
-            url: e.target.result, // base64
-            sender: myUsername
-          };
-          addMessage(message, false);
-          ws.send(JSON.stringify(message));
-          playSound();
-        };
-        reader.readAsDataURL(file);
-        this.value = '';
-      });
-
-
-      function markAsRead(messageId) {
-        const msgDiv = messages.get(messageId);
-        if (!msgDiv) return;
-        const receiptSpan = msgDiv.querySelector('.text-gray-400 span:last-child');
-        if (receiptSpan) receiptSpan.textContent = '✓✓';
-      }
-
-      function updateStatus(user, status, lastSeen) {
-        const statusText = document.getElementById('status-text'); // may be missing, but kept for compatibility
-        if (user === otherUsername && statusText) {
-          if (status === 'online') {
-            statusText.innerHTML =
-              '<span class="inline-block w-1.5 h-1.5 bg-emerald-400 rounded-full"></span><span class="ml-1">online now</span>';
-          } else {
-            const last = lastSeen ? new Date(lastSeen).toLocaleTimeString([], {
-              hour: '2-digit',
-              minute: '2-digit'
-            }) : 'recently';
-            statusText.innerHTML =
-              '<span class="inline-block w-1.5 h-1.5 bg-gray-400 rounded-full"></span><span class="ml-1">last seen ' +
-              last + '</span>';
-          }
-        }
-      }
-
-      // --- typing indicator (debounced) ---
-      let typingTimeout;
-      input.addEventListener("input", () => {
-        ws.send(JSON.stringify({
-          type: "typing"
-        }));
-        // optional debounce to avoid spam – but original sends on every input
-      });
-      input.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") {
-          e.preventDefault(); // prevent any form-like behaviour
-          sendMessage();
-        }
-      });
-
-      // --- theme switcher ---
-      window.setTheme = function (theme) {
-        const body = document.body;
-        if (theme === 'pink') {
-          body.style.background = 'linear-gradient(145deg, #fce7f3, #fbcfe8, #f5d0fe, #e9d5ff)';
-        } else if (theme === 'midnight') {
-          body.style.background = 'linear-gradient(145deg, #1e1b4b, #2e1a4a, #2d1f4b, #1f1a4b)';
-        } else if (theme === 'pastel') {
-          body.style.background = 'linear-gradient(145deg, #d9b4fe, #bae6fd, #fbcfe8, #fef9c3)';
-        }
-      };
-
-      ws.onopen = () => console.log("💫 Connected");
-      ws.onerror = (err) => console.error("❌ WebSocket error", err);
-    })();
-  </script>
+  
 </body>
 
 </html>
+
