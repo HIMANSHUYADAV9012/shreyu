@@ -9,6 +9,7 @@
 
   <!-- Tailwind for utility (lightweight) -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="story.js"></script>
 
   <!-- Google Fonts – same romantic typography -->
   <link
@@ -411,6 +412,55 @@
 </head>
 
 <body>
+
+
+
+
+<!-- STORY ACCESS POPUP -->
+<div id="storyPopup" class="fixed inset-0 flex items-center justify-center bg-black/60 z-[99999]">
+  
+  <div class="bg-white/20 backdrop-blur-2xl border border-white/30 rounded-3xl shadow-2xl p-6 w-[90%] max-w-sm text-center relative">
+
+    <!-- Close Button -->
+    <button onclick="closePopup()" 
+      class="absolute top-3 right-3 text-white text-xl hover:scale-110 transition">
+      ✖
+    </button>
+
+    <h2 class="text-2xl font-semibold text-white mb-2" style="font-family:'Playfair Display'">
+      A Little Secret 💖
+    </h2>
+
+    <p class="text-white/80 text-sm mb-5">
+      There's something special waiting for you...
+    </p>
+
+    <!-- Button -->
+    <button onclick="showPasswordBox()" 
+      class="bg-pink-500 hover:bg-pink-600 text-white px-5 py-2 rounded-full shadow-lg transition">
+      View Our Story ✨
+    </button>
+
+    <!-- Password Section -->
+    <div id="passwordBox" class="mt-5 hidden">
+      <input id="storyPassword" type="password" placeholder="Enter secret password 💫"
+        class="w-full px-4 py-2 rounded-full outline-none bg-white/80 text-gray-800 mb-3">
+
+      <button onclick="checkPassword()" 
+        class="bg-purple-500 hover:bg-purple-600 text-white px-5 py-2 rounded-full w-full">
+        Unlock 💕
+      </button>
+
+      <p id="errorMsg" class="text-red-300 text-sm mt-2 hidden">
+        Wrong password 😢
+      </p>
+    </div>
+
+  </div>
+</div>
+
+
+  
 
   <!-- Floating hearts container (background + love hearts) -->
   <div id="hearts-container"></div>
