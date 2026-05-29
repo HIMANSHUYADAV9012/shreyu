@@ -1,8 +1,5 @@
-// face-verify.js
-// ========== CONFIGURATION ==========
-const API_URL = "http://127.0.0.1:8000/verify-face";  // 🔁 CHANGE THIS
+const API_URL = "https://facereco-lc31.onrender.com/verify";
 
-// DOM Elements
 let video, canvas, captureBtn, rescanBtn, loadingMsg, resultMsg;
 let facePanel, passwordPanel, faceTabBtn, passTabBtn;
 let teaserView, verificationView;
@@ -10,7 +7,6 @@ let stream = null;
 let isProcessing = false;
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Get elements
   video = document.getElementById('video');
   canvas = document.getElementById('canvas');
   captureBtn = document.getElementById('captureBtn');
@@ -24,37 +20,31 @@ document.addEventListener('DOMContentLoaded', () => {
   teaserView = document.getElementById('teaserView');
   verificationView = document.getElementById('verificationView');
 
-  // Event listeners for verification view
   if (captureBtn) captureBtn.addEventListener('click', captureAndVerify);
   if (rescanBtn) rescanBtn.addEventListener('click', rescan);
   if (faceTabBtn) faceTabBtn.addEventListener('click', switchToFace);
   if (passTabBtn) passTabBtn.addEventListener('click', switchToPassword);
 });
 
-// Show verification view (called from teaser button)
-window.showVerificationView = function() {
+window.showVerificationView = function () {
   teaserView.classList.add('hidden');
   verificationView.classList.remove('hidden');
-  // Start with Face Scan tab by default
   switchToFace();
 };
 
-// Switch to Face Scan tab
 async function switchToFace() {
   facePanel.style.display = 'block';
   passwordPanel.style.display = 'none';
-  faceTabBtn.className = "flex-1 py-2 text-white font-semibold rounded-full transition-all duration-200 bg-pink-500/50";
-  passTabBtn.className = "flex-1 py-2 text-white/70 font-semibold rounded-full transition-all duration-200";
+  faceTabBtn.className = "flex-1 py-2 text-white font-medium rounded-full transition-all duration-200 bg-pink-500/50";
+  passTabBtn.className = "flex-1 py-2 text-white/70 font-medium rounded-full transition-all duration-200";
   await initCamera();
 }
 
-// Switch to Password tab
 function switchToPassword() {
   facePanel.style.display = 'none';
   passwordPanel.style.display = 'block';
-  passTabBtn.className = "flex-1 py-2 text-white font-semibold rounded-full transition-all duration-200 bg-pink-500/50";
-  faceTabBtn.className = "flex-1 py-2 text-white/70 font-semibold rounded-full transition-all duration-200";
-  // Release camera
+  passTabBtn.className = "flex-1 py-2 text-white font-medium rounded-full transition-all duration-200 bg-pink-500/50";
+  faceTabBtn.className = "flex-1 py-2 text-white/70 font-medium rounded-full transition-all duration-200";
   if (stream) {
     stream.getTracks().forEach(track => track.stop());
     stream = null;
@@ -62,7 +52,6 @@ function switchToPassword() {
   }
 }
 
-// Initialize Camera
 async function initCamera() {
   if (stream) return;
   try {
@@ -70,7 +59,6 @@ async function initCamera() {
     stream = await navigator.mediaDevices.getUserMedia(constraints);
     video.srcObject = stream;
     await video.play();
-    // Reset UI
     if (resultMsg) resultMsg.classList.add('hidden');
     if (rescanBtn) rescanBtn.classList.add('hidden');
     if (loadingMsg) loadingMsg.classList.add('hidden');
@@ -89,7 +77,6 @@ async function initCamera() {
   }
 }
 
-// Capture and verify
 async function captureAndVerify() {
   if (isProcessing) return;
   if (!stream) await initCamera();
@@ -102,9 +89,9 @@ async function captureAndVerify() {
   resultMsg.classList.add('hidden');
   rescanBtn.classList.add('hidden');
 
-  const context = canvas.getContext('2d');
   canvas.width = video.videoWidth;
   canvas.height = video.videoHeight;
+  const context = canvas.getContext('2d');
   context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
   const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.9));
@@ -121,13 +108,16 @@ async function captureAndVerify() {
     const response = await fetch(API_URL, { method: 'POST', body: formData });
     const data = await response.json();
 
-    if (response.ok && data.match === true) {
-      showResult(true, `✅ Verified! Welcome ${data.person_id || 'user'} ✨`);
+    if (response.ok && data.success === true && data.matched === true) {
+      showResult(true, `✅ Verified! Welcome ${data.person_name} ✨`);
       setTimeout(() => {
-        window.location.href = "/story";  // redirect on success
+        window.location.href = "/story";
       }, 1200);
+    } else if (response.ok && data.success === true && data.matched === false) {
+      showResult(false, `❌ Face does not match. Try again, my love 💔`);
+      resetAfterVerify();
     } else {
-      let msg = data.message || "Face does not match. Try again.";
+      const msg = data.message || "Verification failed. Try again.";
       showResult(false, `❌ ${msg}`);
       resetAfterVerify();
     }
@@ -167,8 +157,7 @@ function rescan() {
   if (!stream) initCamera();
 }
 
-// Password check (original)
-window.checkPassword = function() {
+window.checkPassword = function () {
   const input = document.getElementById('storyPassword').value.trim();
   const error = document.getElementById('errorMsg');
   if (input.toLowerCase() === "shreyu") {
@@ -178,8 +167,7 @@ window.checkPassword = function() {
   }
 };
 
-// Close popup (original, but stop camera)
-window.closePopup = function() {
+window.closePopup = function () {
   document.getElementById("storyPopup").style.display = "none";
   if (stream) {
     stream.getTracks().forEach(track => track.stop());
