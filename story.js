@@ -1,4 +1,4 @@
-const API_URL = "https://facereco-lc31.onrender.com/verify";
+const API_URL = "https://facereco-7ge8.onrender.com/verify";
 
 let video, canvas, captureBtn, rescanBtn, loadingMsg, resultMsg;
 let facePanel, passwordPanel, faceTabBtn, passTabBtn;
